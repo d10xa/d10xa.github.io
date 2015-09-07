@@ -103,3 +103,5 @@ cd download-xml-plugin-example
 {% endhighlight %}
 
 Ошибка. Не удалось получить импорты.
+
+https://spring.io/guides/gs/producing-web-service/
