@@ -14,9 +14,8 @@ categories: gradle plugin
 xjc -wsdl http://my-site-name.ru/MyService.wsdl
 {% endhighlight %}
 
-Но бывает такое, что в схеме используются локальные schemaLocation'ы
-и данный способ генерации классов оказывается невозможным.
-Валидным schemaLocation'ом является URL. Локальное имя файла это невалидный URL.
+Иногда, ошибочно, вместо валидного URL на ресурс, в аттрибуте `schemaLocation`, указываются локальные пути к файлам.
+И данный способ генерации классов оказывается невозможным.
 
 Пример невалидной схемы
 {% highlight bash %}
@@ -37,61 +36,56 @@ xjc -wsdl http://my-site-name.ru/MyService.wsdl
 3. Исправляем schemaLocation'ы по необходимости
 4. `xjc -wsdl local-file.wsdl`
 
-Если таких xsd файлов много и иерархия import'ов очень большая, то делать это всё руками довольно долго.
+Если таких xsd файлов много и иерархия import'ов очень большая - делать это руками довольно долго.
 
-Используем gradle плагин ru.d10xa.download-xml
-----------------------------------------------
+Как выглядит решение проблемы gradle плагином ru.d10xa.download-xml
+-------------------------------------------------------------------
 
-Для упрощения скачивания таких схем я написал плагин для gradle который делает всю грязную работу за нас.
-
-Пример файла `build.gradle`
+Плагин добавляет расширение downloadXml к задачам в gradle. 
 
 {% highlight groovy %}
-plugins {
-    id 'ru.d10xa.download-xml' version '0.0.4'
-}
-task downloadWsdl << {
-    downloadXml {
-        src(['http://my-site-name.ru/MyService.wsdl'])
-        dest buildDir
-        namespaceToFile([
-                'http://example/ws'   : 'service.wsdl',
-                'http://example/user' : 'xsd/user.xsd',
-        ])
-        locations {
-             malformedLocationHandler {
-                 "http://example/$it"
-             }
-        }
+downloadXml {
+    src(['http://my-site-name.ru/MyService.wsdl'])
+    dest buildDir
+    namespaceToFile([
+            'http://example/ws'   : 'service.wsdl',
+            'http://example/user' : 'xsd/user.xsd',
+    ])
+    locations {
+         malformedLocationHandler {
+             "http://example/$it"
+         }
     }
 }
-
-
 {% endhighlight %}
 
-Во время первого запуска задачи не обязательно указывать `namespaceToFile`, gradle напишет в консоль подсказку,
-какие нэймспэйсы он нашел.
+Во время первого запуска задачи, не обязательно указывать `namespaceToFile`. 
+Gradle напишет в консоль нэймспэйсы, которые он нашел. Достаточно вставить их в блок `namespaceToFile([])`
+и заменить расширения xml на wsdl и xsd, соответственно (необходимо для генерации классов).
 
-После выполнения команды `gradle downloadWsdl`, в папке build появятся наши файлы.
+Пример плохого веб сервиса
+==========================
 
-Пример использования плагина
-============================
+Создание основы приложения описано на 
+[spring.io][spring-producing-soap-guide]
 
-Следующими командами запускаем soap сервис (localhost:8080)
+Исходники примера можно посмотреть на [гитхабе][spring-boot-ws-bad-practice]
+
+Клонируем проект в локальную папку и запустим (порт 8081 можно заменить на любой свободный)
 
 {% highlight bash %}
 git clone https://github.com/d10xa/spring-boot-ws-bad-practice.git
 cd spring-boot-ws-bad-practice
-./gradlew bootRun
+./gradlew bootRun -Pserver.port=8081
 {% endhighlight %}
 
-Скачиваем схемы, строим классы, собираем jar
+В папке `download-xml-plugin-example` находится пример использования плагина ru.d10xa.download-xml.
+Выполнив команду `./gradlew build`, мы скачаем схемы, сгенерируем по ним классы и соберем jar.
 
 {% highlight bash %}
 cd download-xml-plugin-example
-./gradlew build
+./gradlew build -Pbase.url=http://localhost:8081
 {% endhighlight %}
-
 
 Теперь пытаемся сгенерировать классы с помощью команд:
 {% highlight bash %}
@@ -104,4 +98,5 @@ cd download-xml-plugin-example
 
 Ошибка. Не удалось получить импорты.
 
-https://spring.io/guides/gs/producing-web-service/
+[spring-producing-soap-guide]:  https://spring.io/guides/gs/producing-web-service/
+[spring-boot-ws-bad-practice]:  https://github.com/d10xa/spring-boot-ws-bad-practice
