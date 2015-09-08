@@ -10,6 +10,9 @@ categories: gradle plugin
 
 Gradle Download Xml позволяет скачивать WSDL,XSD схемы со всеми зависимостями.
 
+- [GitHub](https://github.com/d10xa/gradle-download-xml-plugin)
+- [Gradle Plugin Portal](https://plugins.gradle.org/plugin/ru.d10xa.download-xml)
+
 Краткое описание проблемы
 -------------------------
 
@@ -71,10 +74,10 @@ Gradle напишет в консоль нэймспэйсы, которые о�
 Пример плохого веб сервиса
 --------------------------
 
-О процессе создания SOAP веб сервиса можно почитать на [spring.io][spring-producing-soap-guide].
+О процессе создания SOAP веб сервиса можно почитать на [spring.io](https://spring.io/guides/gs/producing-web-service/).
 В этом руководстве показана реализация веб сервиса использующего один файл xsd.
 
-Исходники примера можно посмотреть на [гитхабе][spring-boot-ws-bad-practice]
+Исходники примера можно посмотреть на [гитхабе](https://github.com/d10xa/spring-boot-ws-bad-practice)
 
 Особенности примера:
 ====================
@@ -96,7 +99,7 @@ Gradle напишет в консоль нэймспэйсы, которые о�
 javax.xml.accessExternalSchema = all
 {% endhighlight %}
 
-Подробнее о доступе можно почитать в [документации][oracle-access-external-schema]
+Подробнее о доступе можно почитать в [документации](http://docs.oracle.com/javase/8/docs/api/javax/xml/XMLConstants.html#ACCESS_EXTERNAL_SCHEMA)
 
 Запускаем веб сервис
 ====================
@@ -136,9 +139,3 @@ cd download-xml-plugin-example
 username 'foo'
 password 'bar'
 {% endhighlight %}
-
-[on-github]                         : https://github.com/d10xa/gradle-download-xml-plugin
-[on-gradle-portal]                  : https://plugins.gradle.org/plugin/ru.d10xa.download-xml
-[spring-producing-soap-guide]       : https://spring.io/guides/gs/producing-web-service/
-[spring-boot-ws-bad-practice]       : https://github.com/d10xa/spring-boot-ws-bad-practice
-[oracle-access-external-schema]     : http://docs.oracle.com/javase/8/docs/api/javax/xml/XMLConstants.html#ACCESS_EXTERNAL_SCHEMA
