@@ -1,12 +1,10 @@
-# Site settings
-#title: Your awesome title
 title: Andrey Stolyarov's Blog
 email: d10xa@mail.ru
 description: Блог о программировании
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://d10xa.github.io" # the base hostname & protocol for your site
+baseurl: ""
+url: "http://d10xa.ru"
 twitter_username: d100xa
 github_username:  d10xa
 
-# Build settings
 markdown: kramdown
+permalink: /:year/:month/:title
