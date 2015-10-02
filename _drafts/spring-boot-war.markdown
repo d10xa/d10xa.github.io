@@ -39,6 +39,17 @@ unzip -l build/libs/foo.jar > foo.jar.txt
 unzip -l build/libs/foo.war > foo.war.txt
 
 sdiff -w 240 foo.jar.txt foo.war.txt> foo.diff.txt
+unzip build/libs/foo.jar -d unzipped_jar
+unzip build/libs/foo.war -d unzipped_war
+sdiff unzipped_jar/META-INF/MANIFEST.MF unzipped_war/META-INF/MANIFEST.MF
+
+отличие:
+
+Main-Class: org.springframework.boot.loader.JarLauncher       |	Main-Class: org.springframework.boot.loader.WarLauncher
+
+ls -l unzipped_jar/org/springframework/boot/loader/
+
+Оба класса присутствуют.
 
 gradle clean build war
 java -jar build/libs/foo.war
