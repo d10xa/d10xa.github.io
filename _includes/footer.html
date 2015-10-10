@@ -46,7 +46,11 @@
       </div>
 
       <div class="footer-col  footer-col-3">
-        <p class="text">{{ site.description }}</p>
+        <p class="text">
+          <a href="{{ "/feed.xml" | prepend: site.baseurl }}">
+            <img src="{{ "/images/feed-icon-14x14.png" | prepend: site.baseurl }}" alt="rss"></a>
+            {{ site.description }}
+        </p>
       </div>
     </div>
 
