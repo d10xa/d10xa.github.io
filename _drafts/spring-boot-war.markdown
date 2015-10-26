@@ -5,16 +5,105 @@ date:   2015-10-01 12:00:00
 categories: spring
 ---
 
-Получаем Jetty Runner для запуска war
+В релиз [Spring-Boot-1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3.0-Full-Release-Notes#spring-boot-cli) 
+войдет возможность создавать war файлы следующей командой
+
+{% highlight bash %}
+$ spring war filename.war script.groovy
+
+{% endhighlight %}
+
+Причем, файл `script.groovy` довольно компактный. Никакие конфигурационные файлы не требуются.
+{% highlight groovy %}
+// script.groovy. Да, кроме него ничего не надо
+package ru.d10xa.springwar;
+
+@RestController
+@RequestMapping('/')
+class Ctrl{
+    @RequestMapping
+    def map(){
+        return ['a':'b']
+    }
+}
+
+{% endhighlight %}
+
+Не смотря на то, что это WAR, он всё так же является 
+[запускаемым](http://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html).
+
+Spring Boot поддерживает запускаемые jar и war файлы благодаря проекту spring-boot-loader.
+По умолчанию, в java нет возможности загружать вложенные jar файлы. Этим занимаются загрузчики, 
+которых spring подкидывает в проект при сборке.
+В манифест добавляется строка `Main-Class: org.springframework.boot.loader.WarLauncher` (или JarLauncher). 
+В WarLauncher есть public static void main который занимается запуском нашего приложения.
+
+Можно запускать так:
+{% highlight bash %}
+java -jar filename.war
+
+{% endhighlight %}
+
+Или так:
 {% highlight bash %}
 wget http://central.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.3.3.v20150827/jetty-runner-9.3.3.v20150827.jar
+java -jar jetty-runner-9.3.3.v20150827.jar example.war
+
 {% endhighlight %}
 
-Запускаем jetty runner
-{% highlight bash %}
-java -jar jetty-runner-9.3.3.v20150827.jar build/libs/foo.war
-{% endhighlight %}
+### Структура Jar
 
+<pre>
+example.jar
+ |
+ +-META-INF
+ |  +-MANIFEST.MF
+ +-org
+ |  +-springframework
+ |     +-boot
+ |        +-loader
+ |           +-&lt;spring boot loader classes&gt;
+ +-com
+ |  +-mycompany
+ |     + project
+ |        +-YouClasses.class
+ +-lib
+    +-dependency1.jar
+    +-dependency2.jar
+</pre>
+
+### Структура War
+
+<pre>
+example.war
+ |
+ +-META-INF
+ |  +-MANIFEST.MF
+ +-org
+ |  +-springframework
+ |     +-boot
+ |        +-loader
+ |           +-&lt;spring boot loader classes&gt;
+ +-WEB-INF
+    +-classes
+    |  +-com
+    |     +-mycompany
+    |        +-project
+    |           +-YouClasses.class
+    +-lib
+    |  +-dependency1.jar
+    |  +-dependency2.jar
+    +-lib-provided
+       +-servlet-api.jar
+       +-dependency3.jar
+</pre>
+
+## Основные отличия WAR от JAR
+
+* Строка указывающая на главный класс в MANIFEST.MF (JarLauncher, WarLauncher)
+* Для War нужен класс наследник SpringBootServletInitializer
+* Структура (Layout) архивов отличается
+* В случае с war, зависимость `tomcat` помещается отдельно от основных зависимостей (lib-provided)
 
 Утилитой [httpie](https://github.com/jkbrzt/httpie) проверяем работоспособность
 {% highlight bash %}
