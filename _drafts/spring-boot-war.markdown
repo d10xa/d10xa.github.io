@@ -9,7 +9,7 @@ categories: spring
 войдет возможность создавать war файлы следующей командой
 
 {% highlight bash %}
-$ spring war filename.war script.groovy
+$ spring war example.war script.groovy
 
 {% endhighlight %}
 
@@ -32,7 +32,7 @@ class Ctrl{
 Не смотря на то, что это WAR, он всё так же является 
 [запускаемым](http://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html).
 
-Spring Boot поддерживает запускаемые jar и war файлы благодаря проекту spring-boot-loader.
+Spring Boot умеет создавать запускаемые jar и war файлы благодаря проекту spring-boot-loader.
 По умолчанию, в java нет возможности загружать вложенные jar файлы. Этим занимаются загрузчики, 
 которых spring подкидывает в проект при сборке.
 В манифест добавляется строка `Main-Class: org.springframework.boot.loader.WarLauncher` (или JarLauncher). 
@@ -40,7 +40,7 @@ Spring Boot поддерживает запускаемые jar и war файл�
 
 Можно запускать так:
 {% highlight bash %}
-java -jar filename.war
+java -jar example.war
 
 {% endhighlight %}
 
@@ -105,22 +105,57 @@ example.war
 * Структура (Layout) архивов отличается
 * В случае с war, зависимость `tomcat` помещается отдельно от основных зависимостей (lib-provided)
 
-Утилитой [httpie](https://github.com/jkbrzt/httpie) проверяем работоспособность
-{% highlight bash %}
-http GET :8080
-http GET :8080/ctrl
+## Перепаковка jar в war (вручную)
+
+[исходники примера](https://github.com/d10xa/blog-examples/tree/master/spring-boot/spring-boot-cli-war)
+
+Создадим класс, наследующийся от SpringBootServletInitializer (в той же директории, где script.groovy)
+
+{% highlight groovy %}
+package ru.d10xa.springwar;
+
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
+
+public class ServletInitializer extends SpringBootServletInitializer {
+
+   @Override
+   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+      return application.sources(Ctrl.class);
+   }
+
+}
+
 {% endhighlight %}
 
-{% highlight bash %}
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Date: Thu, 01 Oct 2015 10:06:26 GMT
-Server: Jetty(9.3.3.v20150827)
-Transfer-Encoding: chunked
 
-{
-    "abc": "xyz"
-}
+{% highlight groovy %}
+rm -rf build
+
+mkdir -p build/tmp/WEB-INF/classes/templates
+mkdir build/tmp/WEB-INF/lib
+mkdir build/tmp/WEB-INF/lib-provided
+
+spring jar build/app.jar App.groovy ServletInitializer.groovy
+
+unzip build/app.jar -d build/extracted_jar
+
+cp -p $(find build/extracted_jar/lib -name '*tomcat*') build/tmp/WEB-INF/lib-provided
+
+cp -p $(find build/extracted_jar/lib -not -name '*tomcat*') build/tmp/WEB-INF/lib
+
+cp -r build/extracted_jar/META-INF/ build/extracted_jar/org/ build/tmp/
+
+sed -i -- 's/JarLauncher/WarLauncher/g' build/tmp/META-INF/MANIFEST.MF
+
+cp -r build/extracted_jar/ru/ build/tmp/WEB-INF/classes
+
+cd build/tmp
+
+zip -r --compression-method=store app.war *
+
+mv app.war ../
+
 {% endhighlight %}
 
 
