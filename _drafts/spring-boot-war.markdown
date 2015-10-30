@@ -38,16 +38,30 @@ Spring Boot умеет создавать запускаемые jar и war фа
 В манифест добавляется строка `Main-Class: org.springframework.boot.loader.WarLauncher` (или JarLauncher). 
 В WarLauncher есть public static void main который занимается запуском нашего приложения.
 
-Можно запускать так:
+Можно запускать как обычный jar:
 {% highlight bash %}
 java -jar example.war
 
 {% endhighlight %}
 
-Или так:
+Или на jetty:
 {% highlight bash %}
 wget http://central.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.3.3.v20150827/jetty-runner-9.3.3.v20150827.jar
 java -jar jetty-runner-9.3.3.v20150827.jar example.war
+
+{% endhighlight %}
+
+Или на wildfly
+
+{% highlight bash %}
+# Dockerfile
+FROM jboss/wildfly
+ADD build/app.war /opt/jboss/wildfly/standalone/deployments/
+{% endhighlight %}
+
+{% highlight bash %}
+docker build --tag=wildfly-app-war . 
+docker run -it --rm -p 8080:8080 wildfly-app-war
 
 {% endhighlight %}
 
@@ -105,7 +119,7 @@ example.war
 * Структура (Layout) архивов отличается
 * В случае с war, зависимость `tomcat` помещается отдельно от основных зависимостей (lib-provided)
 
-## Перепаковка jar в war (вручную)
+## Перепаковка из jar в war (скриптом)
 
 [исходники примера](https://github.com/d10xa/blog-examples/tree/master/spring-boot/spring-boot-cli-war)
 
@@ -128,32 +142,38 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 {% endhighlight %}
 
+Выполним скрипт:
 
-{% highlight groovy %}
+{% highlight bash %}
+
+# Удаляем директорию build
 rm -rf build
 
-mkdir -p build/tmp/WEB-INF/classes/templates
-mkdir build/tmp/WEB-INF/lib
-mkdir build/tmp/WEB-INF/lib-provided
+# Создаем структуру war архива в build/tmp
+mkdir -p build/tmp build/tmp/WEB-INF/ build/tmp/WEB-INF/classes/templates build/tmp/WEB-INF/lib build/tmp/WEB-INF/lib-provided
 
+# Утилитой spring-boot-cli создаем jar
 spring jar build/app.jar App.groovy ServletInitializer.groovy
 
+# Распаковываем jar
 unzip build/app.jar -d build/extracted_jar
 
+# Библиотеки для встроенного сервера закидываем в папку lib-provided, остальные в lib
 cp -p $(find build/extracted_jar/lib -name '*tomcat*') build/tmp/WEB-INF/lib-provided
-
 cp -p $(find build/extracted_jar/lib -not -name '*tomcat*') build/tmp/WEB-INF/lib
 
+# Копируем META-INF и спринговые классы в корень будующего war
 cp -r build/extracted_jar/META-INF/ build/extracted_jar/org/ build/tmp/
 
+# В манифесте меняем Main-Class JarLauncher на WarLauncher
 sed -i -- 's/JarLauncher/WarLauncher/g' build/tmp/META-INF/MANIFEST.MF
 
+# Копируем классы из пакета ru в WEB-INF/classes
 cp -r build/extracted_jar/ru/ build/tmp/WEB-INF/classes
 
+# Архивируем без сжатия, и размещаем war рядом с jar
 cd build/tmp
-
 zip -r --compression-method=store app.war *
-
 mv app.war ../
 
 {% endhighlight %}
