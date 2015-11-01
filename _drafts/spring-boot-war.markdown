@@ -178,6 +178,50 @@ mv app.war ../
 
 {% endhighlight %}
 
+Для сравнения, соберем war утилитой spring-boot-cli
+{% highlight groovy %}
+spring war build/spring-cli-app.war App.groovy
+
+{% endhighlight %}
+
+
+Сравним
+{% highlight bash %}
+scripts/zipdiff.groovy build/app.war build/spring-cli-app.war
+
+{% endhighlight %}
+
+
+<pre>
+
+---unique in build/app.war
+WEB-INF/classes/ru/d10xa/springwar/ServletInitializer.class
+org/springframework/boot/cli/app/SpringApplicationLauncher.class
+org/springframework/boot/cli/archive/PackagedSpringApplicationLauncher.class
+---unique in build/spring-cli-app.war
+WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationLauncher.class
+WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.class
+WEB-INF/classes/org/springframework/boot/cli/archive/PackagedSpringApplicationLauncher.class
+</pre>
+
+[SpringApplicationWebApplicationInitializer](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-cli/src/main/java/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.java)
+
+## spring war VS gradle build
+
+В архиве, собранном через spring-cli есть несколько файлов, которых нет в сборке gradle.
+<pre>
+WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationLauncher.class
+WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.class
+WEB-INF/classes/org/springframework/boot/cli/archive/PackagedSpringApplicationLauncher.class
+WEB-INF/lib/groovy-2.4.4.jar
+WEB-INF/lib/groovy-templates-2.4.4.jar
+WEB-INF/lib/groovy-xml-2.4.4.jar
+org/springframework/boot/groovy/DelegateTestRunner.class
+org/springframework/boot/groovy/DependencyManagementBom.class
+org/springframework/boot/groovy/EnableDeviceResolver.class
+org/springframework/boot/groovy/EnableGroovyTemplates.class
+org/springframework/boot/groovy/GroovyTemplate.class
+</pre>
 
 unzip -l build/libs/foo.jar > foo.jar.txt
 unzip -l build/libs/foo.war > foo.war.txt
