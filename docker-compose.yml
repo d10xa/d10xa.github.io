@@ -1,0 +1,7 @@
+blog:
+  image: jekyll/stable
+  volumes:
+  - ./:/srv/jekyll
+  ports:
+  - 4000:4000
+  command: ["jekyll", "s", "--drafts"]
