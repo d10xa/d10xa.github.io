@@ -9,11 +9,13 @@ categories: spring
 войдет возможность создавать war файлы следующей командой
 
 {% highlight bash %}
-$ spring war example.war script.groovy
+spring war example.war script.groovy
 
 {% endhighlight %}
 
-Причем, файл `script.groovy` довольно компактный. Никакие конфигурационные файлы не требуются.
+Рабочее веб приложение может уместиться в 1 твит. 
+Никакие конфигурационные файлы не требуются.
+Можно запустить(или собрать в jar,war) следующий код:
 {% highlight groovy %}
 // script.groovy. Да, кроме него ничего не надо
 package ru.d10xa.springwar;
@@ -32,7 +34,8 @@ class Ctrl{
 Не смотря на то, что это WAR, он всё так же является 
 [запускаемым](http://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html).
 
-Spring Boot умеет создавать запускаемые jar и war файлы благодаря проекту spring-boot-loader.
+Spring Boot умеет создавать запускаемые jar и war файлы благодаря проекту 
+[spring-boot-loader](https://github.com/spring-projects/spring-boot/tree/master/spring-boot-tools/spring-boot-loader).
 По умолчанию, в java нет возможности загружать вложенные jar файлы. Этим занимаются загрузчики, 
 которых spring подкидывает в проект при сборке.
 В манифест добавляется строка `Main-Class: org.springframework.boot.loader.WarLauncher` (или JarLauncher). 
@@ -112,14 +115,14 @@ example.war
        +-dependency3.jar
 </pre>
 
-## Основные отличия WAR от JAR
+## Основные отличия WAR от JAR, собранных spring-boot-cli
 
 * Строка указывающая на главный класс в MANIFEST.MF (JarLauncher, WarLauncher)
 * Для War нужен класс наследник SpringBootServletInitializer
 * Структура (Layout) архивов отличается
 * В случае с war, зависимость `tomcat` помещается отдельно от основных зависимостей (lib-provided)
 
-## Перепаковка из jar в war (скриптом)
+## Перепаковка из jar в war (bash)
 
 [исходники примера](https://github.com/d10xa/blog-examples/tree/master/spring-boot/spring-boot-cli-war)
 
@@ -187,11 +190,20 @@ spring war build/spring-cli-app.war App.groovy
 
 Сравним
 {% highlight bash %}
-scripts/zipdiff.groovy build/app.war build/spring-cli-app.war
+groovy scripts/zipdiff.groovy build/app.war build/spring-cli-app.war
 
 {% endhighlight %}
 
+Добавление загрузчиков осуществляется в классе
+[ArchiveCommand.java](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-cli/src/main/java/org/springframework/boot/cli/command/archive/ArchiveCommand.java#L241)
+, где в зависимости от [Layout](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-tools/spring-boot-loader-tools/src/main/java/org/springframework/boot/loader/tools/Layouts.java)
+, классы попадают либо в корень архива (jar), либо в `WEB-INF/classes/` (war).
+Поэтому классы PackagedSpringApplicationLauncher и SpringApplicationLauncher при сравнении,
+ находятся в разных директориях. Но в classpath они всёравно попадают. 
 
+Отличается только 
+[SpringApplicationWebApplicationInitializer](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-cli/src/main/java/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.java)
+. Вместо него мы добавили ru/d10xa/springwar/ServletInitializer
 <pre>
 
 ---unique in build/app.war
@@ -204,11 +216,17 @@ WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationWebApplication
 WEB-INF/classes/org/springframework/boot/cli/archive/PackagedSpringApplicationLauncher.class
 </pre>
 
-[SpringApplicationWebApplicationInitializer](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-cli/src/main/java/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.java)
 
 ## spring war VS gradle build
 
-В архиве, собранном через spring-cli есть несколько файлов, которых нет в сборке gradle.
+Сборка с утилитой spring отличается от gradle наличием groovy в classpath + несколько вспомогательных классов
+(например, для тестов). 
+
+{% highlight groovy %}
+gradle clean build war
+spring war example.war script.groovy
+{% endhighlight %}
+
 <pre>
 WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationLauncher.class
 WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.class
@@ -223,23 +241,6 @@ org/springframework/boot/groovy/EnableGroovyTemplates.class
 org/springframework/boot/groovy/GroovyTemplate.class
 </pre>
 
-unzip -l build/libs/foo.jar > foo.jar.txt
-unzip -l build/libs/foo.war > foo.war.txt
-
-sdiff -w 240 foo.jar.txt foo.war.txt> foo.diff.txt
-unzip build/libs/foo.jar -d unzipped_jar
-unzip build/libs/foo.war -d unzipped_war
-sdiff unzipped_jar/META-INF/MANIFEST.MF unzipped_war/META-INF/MANIFEST.MF
-
-отличие:
-
-Main-Class: org.springframework.boot.loader.JarLauncher       |	Main-Class: org.springframework.boot.loader.WarLauncher
-
-ls -l unzipped_jar/org/springframework/boot/loader/
-
-Оба класса присутствуют.
-
-gradle clean build war
 java -jar build/libs/foo.war
 
 gradle clean war
