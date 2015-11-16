@@ -1,11 +1,9 @@
 ---
 layout: post
-title: Spring Boot War
-date: {}
+title:  Spring Boot War
+date:   2015-11-16 23:00:00
 categories: spring
-published: true
 ---
-
 
 Несколько часов назад вышел релиз [Spring-Boot-1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3.0-Full-Release-Notes#spring-boot-cli) 
 Появилась возможность создавать war архивы через утилиту spring следующей командой
