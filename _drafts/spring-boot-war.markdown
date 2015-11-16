@@ -5,8 +5,8 @@ date:   2015-10-01 12:00:00
 categories: spring
 ---
 
-В релиз [Spring-Boot-1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3.0-Full-Release-Notes#spring-boot-cli) 
-войдет возможность создавать war файлы следующей командой
+Несколько часов назад вышел релиз [Spring-Boot-1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3.0-Full-Release-Notes#spring-boot-cli) 
+Появилась возможность создавать war архивы через утилиту spring следующей командой
 
 {% highlight bash %}
 spring war example.war script.groovy
@@ -227,6 +227,8 @@ gradle clean build war
 spring war example.war script.groovy
 {% endhighlight %}
 
+Классы и jar'ы которые были добавлены spring-boot-cli при сборке архива:
+
 <pre>
 WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationLauncher.class
 WEB-INF/classes/org/springframework/boot/cli/app/SpringApplicationWebApplicationInitializer.class
@@ -241,8 +243,14 @@ org/springframework/boot/groovy/EnableGroovyTemplates.class
 org/springframework/boot/groovy/GroovyTemplate.class
 </pre>
 
-java -jar build/libs/foo.war
+А зачем вообще нужно собирать war? [Issue](https://github.com/spring-projects/spring-boot/issues/925) 
+на гитхабе, в котором просили добавить сборку war был открыт больше года 
+и пул реквесты ни кто не присылал, хотя пофиксить это можно довольно просто. 
+Я собирал war потому, что на OpenShift PaaS можно было создать себе контейнер 
+с "каким нибудь" application-сервером в несколько кликов и потом через `scp` кидать war в папку автодеплой.
+Но, как оказалось, от application-сервера я получил только проблемы.  
+Локально с встроенным в jar томкатом всё работало хорошо, но 
+application-сервер на openshift некорректно преобразовывал русские буквы в url. 
+Теперь spring boot приложения я собираю только в jar.
 
-gradle clean war
-java -jar build/libs/foo.war
-# no main manifest attribute, in build/libs/foo.war
+Почитать как запускать jar на openshift можно в [спринговой документации](http://docs.spring.io/spring-boot/docs/current/reference/html/cloud-deployment.html#cloud-deployment-openshift)
