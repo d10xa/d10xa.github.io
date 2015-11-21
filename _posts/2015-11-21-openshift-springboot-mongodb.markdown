@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Spring Boot приложение в облаке OpenShift(java-8, mongodb-3)
+title:  "Spring Boot приложение в облаке OpenShift(java-8, mongodb-3)"
 date:   2015-11-20 19:00:00
 categories: cloud
 ---
