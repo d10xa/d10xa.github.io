@@ -115,8 +115,8 @@ spring.data.mongodb.uri=${MONGODB_URL}demo
 
 ## Что получилось
 
-По url demo-username.rhcloud.com доступно только что созданное приложение.
- 
+По url `demo-username.rhcloud.com` доступно только что созданное приложение.
+
 Установлены
 
 - jdk1.8.0_65
