@@ -1,4 +1,4 @@
-blog:
+jekyll:
   image: jekyll/stable
   volumes:
   - ./:/srv/jekyll
