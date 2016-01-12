@@ -53,9 +53,20 @@ String xmlString = new File('soap1.xml').text
 GPathResult xml = new XmlSlurper().parseText(xmlString)
 {% endhighlight %}
 
-Вытащим все нэймспэйсы из xml документа и уберем дубликаты.
+Вытащим все нэймспэйсы из xml элементов и уберем дубликаты 
+(такой способ не подойдет если используются атрибуты с нэймспэйсами) 
 {% highlight groovy %}
 List<String> namespaces = xml.'**'.collect { it.namespaceURI() }.unique()
+{% endhighlight %}
+
+Если в xml используются атрибуты с нэймспэйсами, их можно вытащить так:
+{% highlight groovy %}
+List<String> namespaces = xml.'**'.inject([]) { list, el ->
+    list += el.namespaceURI()
+    list += el.attributes()*.key
+        .findAll { it.startsWith("{") }
+        .collect { it[1..it.indexOf("}")-1] }
+}.unique().minus('')
 {% endhighlight %}
 
 Убедимся, что в списке нет неиспользуемых нэймспэйсов (xmlns:unused="http://unused.ns")
