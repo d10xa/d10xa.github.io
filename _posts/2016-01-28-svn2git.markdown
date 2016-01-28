@@ -1,0 +1,111 @@
+---
+layout: post
+title:  "Перенос репозитория из SVN в GIT"
+date:   2016-01-28 10:00:00
+categories: git
+---
+
+Способ актуален только для проектов с нестандартным layout'ом. 
+
+    repository-root
+     |
+     +-tags
+     |  +-MyProject-2.0.0
+     |    +-MyProject
+     |      +-<project root>
+     |  +-MyProject-2.1.0
+     |    +-MyProject
+     |      +-<project root>
+     +-trunk
+     |  +-MyProject
+     |      +-<project root>
+     
+Пользователь в svn определяется логином. Пользователь в git это связка логин+почта.
+Создадим файл описания пользователей. Воспользуемся для этого утилитой от atlassian
+
+    wget -O /tmp/svn-migration-scripts.jar \
+    https://bitbucket.org/atlassian/svn-migration-scripts/downloads/svn-migration-scripts.jar 
+    
+    java -jar /tmp/svn-migration-scripts.jar authors \
+    http://mysvn.ru/repo-name MyProjectGit > /tmp/MyProject_authors.txt
+    
+Открываем файл и меняем email'ы пользователей.
+    
+    user = user<user@example.com>
+    user2 = user2<user2@example.com>
+
+Инициализируем папку с репозиторием. 
+
+    git svn init --prefix=svn/ --trunk=trunk/MyProject http://mysvn.ru/repo-name MyProjectGit 
+
+Добавим авторов
+
+    cd MyProjectGit/ 
+    git config svn.authorsfile /tmp/MyProject_authors.txt
+
+Теперь определим тэги которые хотим увидеть в гит репозитории и допишем их в файл .git/config. 
+Должно получиться примерно следующее:
+
+    [core] 
+        repositoryformatversion = 0 
+        filemode = true 
+        bare = false 
+        logallrefupdates = true 
+    [svn-remote "svn"] 
+        url = http://svn.fsvps.ru/fsvps-regcrt 
+        fetch = trunk/MyProject:refs/remotes/svn/trunk 
+        tags = tags/{MyProject-2.0.0}/MyProject:refs/remotes/svn/tags/* 
+        tags = tags/{MyProject-2.0.2}/MyProject:refs/remotes/svn/tags/* 
+        tags = tags/{MyProject-2.2.0}/MyProject:refs/remotes/svn/tags/* 
+        tags = tags/{MyProject-2.2.1}/MyProject:refs/remotes/svn/tags/* 
+    [svn] 
+        authorsfile = /tmp/MyProject_authors.txt
+        
+Для загрузки и конвертации svn репозитория выполним команду:
+    
+    git svn fetch 
+
+Если сейчас выполнить команду `git tag`, то тэгов мы не увидим. 
+Поэтому нужно преобразовать svn тэги в локальные.
+
+Метки версий в гите принято называть в таком виде `v1.1.1'
+
+Следующий groovy скрипт печатает команды которые создадут локальные тэги.  
+
+    // /tmp/Svn2Git.groovy
+    def svnToGitTagName = { it.replace("MyProject-", "v") }
+    String gitBranchCommand = 'git branch -r'
+    
+    def tags = gitBranchCommand.execute().text.readLines()
+           .findAll { it.contains "svn/tags/" }*.trim()
+           .collect { it.replace('svn/tags/', '') }
+           .collect { [svn: it, git: svnToGitTagName(it)] }
+    
+    tags.each { tag ->
+       def svnTag = "refs/remotes/svn/tags/${tag.svn}"
+       println """git tag -a ${tag.git} -m"Converting SVN tags" $svnTag"""
+    }
+   
+Запускаем скрипт
+
+    groovy /tmp/Svn2Git.groovy
+
+Команда выведет примерно следующее 
+   
+    git tag -a v2.0.0 -m"Converting SVN tags" refs/remotes/svn/tags/MyProject-2.0.0
+    git tag -a v2.0.2 -m"Converting SVN tags" refs/remotes/svn/tags/MyProject-2.0.2
+    git tag -a v2.2.0 -m"Converting SVN tags" refs/remotes/svn/tags/MyProject-2.2.0
+    git tag -a v2.2.1 -m"Converting SVN tags" refs/remotes/svn/tags/MyProject-2.2.1
+
+Если всё устраивает - выполняем команды.
+
+    groovy /tmp/Svn2Git.groovy | sh -s 
+
+Перед пушем в удаленный репозиторий, склонируем всё что получилось в 
+[чистый репозиторий](http://githowto.com/ru/bare_repositories) 
+
+    git clone --bare MyProjectGit MyProject.git
+    cd Project.git
+    git push --mirror https://github.com/username/MyProject.git
+
+[http://stackoverflow.com/questions/33199460/git-svn-migration-with-non-standard-layout-doesnt-show-merges](http://stackoverflow.com/questions/33199460/git-svn-migration-with-non-standard-layout-doesnt-show-merges)
