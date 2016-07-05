@@ -61,7 +61,4 @@ LanguageRepository - репозирорий, реализацией которо
 
 upToDateWhen { false } // запускаем тесты даже если у нас не изменились исходники
 
-
-### Исходники примера
-
-{% gist c9ce30139b7dfeac0702 %}
+[Исходники примера](https://gist.github.com/d10xa/c9ce30139b7dfeac0702)
