@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "HTTPie session"
-date:   2016-07-12 15:00:00
+date:   2016-07-12
 categories: httpie
 ---
 
