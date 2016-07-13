@@ -5,7 +5,7 @@ date:   2016-07-12
 categories: httpie
 ---
 
-В HTTPie есть поддержка [сессий](https://github.com/jkbrzt/httpie#sessions)
+В HTTPie есть поддержка [сессий](https://github.com/jkbrzt/httpie#sessions).
 По умолчанию каждый запрос не зависит от предыдущих. 
 Параметр `--session` позволяет сохранять именованные сессии.
 
