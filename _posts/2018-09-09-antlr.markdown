@@ -36,38 +36,43 @@ categories: antlr scala
  - добавить аргументы и директорию, куда сложить .java классы
 
 
-    plugins {
-        id 'scala'
-        id 'antlr'
-        id 'application'
-    }
-    
-    mainClassName = 'ru.d10xa.antlr.Main'
-    
-    dependencies {
-        antlr "org.antlr:antlr4:4.7.1"
-        compile "org.antlr:antlr4-runtime:4.7.1"
-        compile "org.scala-lang:scala-library:2.12.6"
-        testCompile "org.scalatest:scalatest_2.12:3.0.5"
-    }
-    
-    repositories {
-        jcenter()
-    }
-    
-    generateGrammarSource {
-        arguments += ['-visitor', '-listener', '-package', 'antlr']
-        outputDirectory = new File(buildDir, "generated-src/antlr/main/antlr")
-    }
+```groovy
+plugins {
+    id 'scala'
+    id 'antlr'
+    id 'application'
+}
 
+mainClassName = 'ru.d10xa.antlr.Main'
+
+dependencies {
+    antlr "org.antlr:antlr4:4.7.1"
+    compile "org.antlr:antlr4-runtime:4.7.1"
+    compile "org.scala-lang:scala-library:2.12.6"
+    testCompile "org.scalatest:scalatest_2.12:3.0.5"
+}
+
+repositories {
+    jcenter()
+}
+
+generateGrammarSource {
+    arguments += ['-visitor', '-listener', '-package', 'antlr']
+    outputDirectory = new File(buildDir, "generated-src/antlr/main/antlr")
+}
+```
 
 Скачиваем грамматику для scala
 
-    curl -o src/main/antlr/Scala.g4 -L https://github.com/antlr/grammars-v4/raw/master/scala/Scala.g4
+```bash
+curl -o src/main/antlr/Scala.g4 -L https://github.com/antlr/grammars-v4/raw/master/scala/Scala.g4
+```
 
 Генерируем java классы
 
-    gradle generateGrammarSource
+```bash
+gradle generateGrammarSource
+```
 
 `src/main/antlr` это директория для грамматик по умолчанию для gradle плагина.
 
@@ -81,138 +86,142 @@ categories: antlr scala
 
 Код:
 
-    import java.nio.charset.Charset
-    
-    import antlr.ScalaLexer
-    import antlr.ScalaParser
-    import org.antlr.v4.runtime.CharStreams
-    import org.antlr.v4.runtime.CommonTokenStream
-    import org.antlr.v4.runtime.Lexer
-    import org.antlr.v4.runtime.ParserRuleContext
-    import org.antlr.v4.runtime.Token
-    import org.antlr.v4.runtime.tree.ErrorNode
-    import org.antlr.v4.runtime.tree.ParseTreeListener
-    import org.antlr.v4.runtime.tree.ParseTreeWalker
-    import org.antlr.v4.runtime.tree.TerminalNode
-    
-    object Main {
-      def main(args: Array[String]) {
-        val fileToParse = args(0)
-        def lexer: ScalaLexer =
-          new ScalaLexer(CharStreams.fromFileName(fileToParse, Charset.forName("UTF-8")))
-        def tokens: CommonTokenStream = new CommonTokenStream(lexer)
-        println("=====")
-        printTokens(lexer)
-        println("=====")
-        val parser: ScalaParser = new ScalaParser(new CommonTokenStream(lexer))
-        val walker = ParseTreeWalker.DEFAULT
-        val parseTreeListener = new PrintlnParseTreeListener(parser)
-        val compilationUnit = parser.compilationUnit
-        walker.walk(parseTreeListener, compilationUnit)
+```scala
+import java.nio.charset.Charset
+
+import antlr.ScalaLexer
+import antlr.ScalaParser
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.Lexer
+import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.tree.ErrorNode
+import org.antlr.v4.runtime.tree.ParseTreeListener
+import org.antlr.v4.runtime.tree.ParseTreeWalker
+import org.antlr.v4.runtime.tree.TerminalNode
+
+object Main {
+  def main(args: Array[String]) {
+    val fileToParse = args(0)
+    def lexer: ScalaLexer =
+      new ScalaLexer(CharStreams.fromFileName(fileToParse, Charset.forName("UTF-8")))
+    def tokens: CommonTokenStream = new CommonTokenStream(lexer)
+    println("=====")
+    printTokens(lexer)
+    println("=====")
+    val parser: ScalaParser = new ScalaParser(new CommonTokenStream(lexer))
+    val walker = ParseTreeWalker.DEFAULT
+    val parseTreeListener = new PrintlnParseTreeListener(parser)
+    val compilationUnit = parser.compilationUnit
+    walker.walk(parseTreeListener, compilationUnit)
+  }
+
+  def printTokens(lexer: ScalaLexer): Unit = {
+    def tokenStream(lexer: Lexer): Stream[Token] =
+      lexer.nextToken() match {
+        case t if t.getType == Token.EOF => Stream.empty
+        case t => t #:: tokenStream(lexer)
       }
-    
-      def printTokens(lexer: ScalaLexer): Unit = {
-        def tokenStream(lexer: Lexer): Stream[Token] =
-          lexer.nextToken() match {
-            case t if t.getType == Token.EOF => Stream.empty
-            case t => t #:: tokenStream(lexer)
-          }
-        val tokensForPrint: Seq[String] =
-          tokenStream(lexer).toList.zipWithIndex.map {
-            case (token, index) =>
-              val name = lexer.getVocabulary.getDisplayName(token.getType)
-              val value = token.getText
-              s"${index + 1}) $name: $value"
-          }
-        tokensForPrint foreach println
+    val tokensForPrint: Seq[String] =
+      tokenStream(lexer).toList.zipWithIndex.map {
+        case (token, index) =>
+          val name = lexer.getVocabulary.getDisplayName(token.getType)
+          val value = token.getText
+          s"${index + 1}) $name: $value"
       }
-    
-      class PrintlnParseTreeListener(parser: ScalaParser) extends ParseTreeListener {
-        override def visitTerminal(node: TerminalNode): Unit = {
-          println(s"visitTerminal, $node")
-        }
-    
-        override def visitErrorNode(node: ErrorNode): Unit = {
-          println(s"visitErrorNode, $node")
-        }
-    
-        override def enterEveryRule(ctx: ParserRuleContext): Unit = {
-          val names: Array[String] = parser.getRuleNames
-          println(s"enterEveryRule, ${names(ctx.getRuleIndex)} $ctx")
-          println(ctx.getText)
-        }
-    
-        override def exitEveryRule(ctx: ParserRuleContext): Unit = {
-          println(s"exitEveryRule, $ctx")
-        }
-      }
-    
+    tokensForPrint foreach println
+  }
+
+  class PrintlnParseTreeListener(parser: ScalaParser) extends ParseTreeListener {
+    override def visitTerminal(node: TerminalNode): Unit = {
+      println(s"visitTerminal, $node")
     }
 
+    override def visitErrorNode(node: ErrorNode): Unit = {
+      println(s"visitErrorNode, $node")
+    }
+
+    override def enterEveryRule(ctx: ParserRuleContext): Unit = {
+      val names: Array[String] = parser.getRuleNames
+      println(s"enterEveryRule, ${names(ctx.getRuleIndex)} $ctx")
+      println(ctx.getText)
+    }
+
+    override def exitEveryRule(ctx: ParserRuleContext): Unit = {
+      println(s"exitEveryRule, $ctx")
+    }
+  }
+
+}
+```
 
 Пример выхлопа для Scala.g4
 
-    package foo.bar
-    
-    object HelloWorld {
-      def main(args: Array[String]): Unit = {
-        println("Hello, world!")
-      }
-    }
+```scala
+package foo.bar
 
-    =====
-    1) 'package': package
-    2) Id: example
-    3) 'object': object
-    4) Id: HelloWorld
-    5) '{': {
-    6) 'def': def
-    7) Id: main
-    8) '(': (
-    9) Id: args
-    10) ':': :
-    11) Id: Array
-    12) '[': [
-    13) Id: String
-    14) ']': ]
-    15) ')': )
-    16) ':': :
-    17) Id: Unit
-    18) '=': =
-    19) '{': {
-    20) Id: println
-    21) '(': (
-    22) StringLiteral: "Hello, world!"
-    23) ')': )
-    24) '}': }
-    25) '}': }
-    =====
-    enterEveryRule, compilationUnit []
-    packageexampleobjectHelloWorld
-    visitTerminal, package
-    enterEveryRule, qualId [1411]
-    example
-    visitTerminal, example
-    exitEveryRule, [1411]
-    enterEveryRule, topStatSeq [1420]
-    objectHelloWorld
-    enterEveryRule, topStat [1373 1420]
-    objectHelloWorld
-    enterEveryRule, tmplDef [1393 1373 1420]
-    objectHelloWorld
-    visitTerminal, object
-    enterEveryRule, objectDef [1237 1393 1373 1420]
-    HelloWorld
-    visitTerminal, HelloWorld
-    enterEveryRule, classTemplateOpt [1265 1237 1393 1373 1420]
-    
-    exitEveryRule, [1265 1237 1393 1373 1420]
-    exitEveryRule, [1237 1393 1373 1420]
-    exitEveryRule, [1393 1373 1420]
-    exitEveryRule, [1373 1420]
-    exitEveryRule, [1420]
-    exitEveryRule, []
+object HelloWorld {
+  def main(args: Array[String]): Unit = {
+    println("Hello, world!")
+  }
+}
+```
 
+```text
+=====
+1) 'package': package
+2) Id: example
+3) 'object': object
+4) Id: HelloWorld
+5) '{': {
+6) 'def': def
+7) Id: main
+8) '(': (
+9) Id: args
+10) ':': :
+11) Id: Array
+12) '[': [
+13) Id: String
+14) ']': ]
+15) ')': )
+16) ':': :
+17) Id: Unit
+18) '=': =
+19) '{': {
+20) Id: println
+21) '(': (
+22) StringLiteral: "Hello, world!"
+23) ')': )
+24) '}': }
+25) '}': }
+=====
+enterEveryRule, compilationUnit []
+packageexampleobjectHelloWorld
+visitTerminal, package
+enterEveryRule, qualId [1411]
+example
+visitTerminal, example
+exitEveryRule, [1411]
+enterEveryRule, topStatSeq [1420]
+objectHelloWorld
+enterEveryRule, topStat [1373 1420]
+objectHelloWorld
+enterEveryRule, tmplDef [1393 1373 1420]
+objectHelloWorld
+visitTerminal, object
+enterEveryRule, objectDef [1237 1393 1373 1420]
+HelloWorld
+visitTerminal, HelloWorld
+enterEveryRule, classTemplateOpt [1265 1237 1393 1373 1420]
+
+exitEveryRule, [1265 1237 1393 1373 1420]
+exitEveryRule, [1237 1393 1373 1420]
+exitEveryRule, [1393 1373 1420]
+exitEveryRule, [1373 1420]
+exitEveryRule, [1420]
+exitEveryRule, []
+```
 
 Для других грамматик можно использовать этот код,
 заменив ScalaLexer, ScalaParser на НазваниеГрамматикиLexer, НазваниеГрамматикиParser.
@@ -227,38 +236,38 @@ categories: antlr scala
 
 Простой shell скрипт оказался самым удобным способом запустить gui.
 
+```bash
+#!/usr/bin/env bash
 
-    #!/usr/bin/env bash
-    
-    if [ "$#" -ne 3 ]; then
-        echo "Illegal number of parameters"
-        echo "> GrammarName startRuleName input-filename(s)"
-        exit 1
-    fi
-    
-    GRAMMAR_NAME="$1"
-    START_RULE_NAME="$2"
-    INPUT_FILENAMES="$3"
-    WORKDIR="$(pwd)/.antlr-tmp"
-    ANTLR_JAR="antlr-4.7.1-complete.jar"
-    ANTLR_JAR_PATH="${WORKDIR}/jar/${ANTLR_JAR}"
-    
-    rm -r "$WORKDIR/build/"
-    mkdir -p "$WORKDIR/jar"
-    mkdir -p "$WORKDIR/build"
-    
-    if ! [ -s  "$ANTLR_JAR_PATH" ]; then
-        curl -o "$ANTLR_JAR_PATH" "https://www.antlr.org/download/$ANTLR_JAR"
-    fi
-    
-    cp "$(pwd)/src/main/antlr/$GRAMMAR_NAME.g4" "$WORKDIR/build/"
-    cd "$WORKDIR/build/"
-    java -jar "${ANTLR_JAR_PATH}" "$GRAMMAR_NAME.g4"
-    export CLASSPATH="${WORKDIR}/build/:${ANTLR_JAR_PATH}"
-    javac *.java
-    cd -
-    java org.antlr.v4.gui.TestRig "$GRAMMAR_NAME" "$START_RULE_NAME" -gui "$INPUT_FILENAMES"
+if [ "$#" -ne 3 ]; then
+    echo "Illegal number of parameters"
+    echo "> GrammarName startRuleName input-filename(s)"
+    exit 1
+fi
 
+GRAMMAR_NAME="$1"
+START_RULE_NAME="$2"
+INPUT_FILENAMES="$3"
+WORKDIR="$(pwd)/.antlr-tmp"
+ANTLR_JAR="antlr-4.7.1-complete.jar"
+ANTLR_JAR_PATH="${WORKDIR}/jar/${ANTLR_JAR}"
+
+rm -r "$WORKDIR/build/"
+mkdir -p "$WORKDIR/jar"
+mkdir -p "$WORKDIR/build"
+
+if ! [ -s  "$ANTLR_JAR_PATH" ]; then
+    curl -o "$ANTLR_JAR_PATH" "https://www.antlr.org/download/$ANTLR_JAR"
+fi
+
+cp "$(pwd)/src/main/antlr/$GRAMMAR_NAME.g4" "$WORKDIR/build/"
+cd "$WORKDIR/build/"
+java -jar "${ANTLR_JAR_PATH}" "$GRAMMAR_NAME.g4"
+export CLASSPATH="${WORKDIR}/build/:${ANTLR_JAR_PATH}"
+javac *.java
+cd -
+java org.antlr.v4.gui.TestRig "$GRAMMAR_NAME" "$START_RULE_NAME" -gui "$INPUT_FILENAMES"
+```
 
 Редактирование файла .g4
 
@@ -276,14 +285,18 @@ categories: antlr scala
 Это можно было увидеть по набору токенов, которые я вывел в println. Один из токенов был `args:`, вместо `args`.
 Смотрим название правила, по которому выделился токен. В строке `9) Id: args:` правило называется `Id`.
 Само правило выглядит так:
- 
-    Id : Plainid | '`' (CharNoBackQuoteOrNewline | UnicodeEscape | CharEscapeSeq )+ '`' ;
+
+```text
+Id : Plainid | '`' (CharNoBackQuoteOrNewline | UnicodeEscape | CharEscapeSeq )+ '`' ;
+```
 
 То есть Id в Scala это либо простой id, либо токен с опциональными особыми символами, но обернутый обратными апострофами.
 Тут и так понятно, что `args:` парсится как Plainid и проблема в нем. Но я объясню суть "дебага" именно на нем.
 Выносим Plainid как отдельное правило, чуть выше Id. Например, IdTemp.
 
-    IdTemp : Plainid ;
+```text
+IdTemp : Plainid ;
+```
 
 В токенах видим, что `args:` это IdTemp `9) IdTemp: args:`.
 Значит нужно повторить операцию с Plainid, разбив его на более простые токены,
