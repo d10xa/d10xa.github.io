@@ -1,0 +1,73 @@
+---
+layout: null
+permalink: keybase.txt
+---
+==================================================================
+https://keybase.io/d10xa
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://d10xa.ru
+  * I am d10xa (https://keybase.io/d10xa) on keybase.
+  * I have a public key with fingerprint 5323 3C61 DB43 6250 6EEF  7D9F BD7A 35A2 C616 51F9
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01019d28ab325fd9ff67be2401527aafffd7250c4d0733aaeef126badefee835c8560a",
+      "fingerprint": "53233c61db4362506eef7d9fbd7a35a2c61651f9",
+      "host": "keybase.io",
+      "key_id": "bd7a35a2c61651f9",
+      "kid": "01019d28ab325fd9ff67be2401527aafffd7250c4d0733aaeef126badefee835c8560a",
+      "uid": "69b86d7973b15aaec8f17d6f8e7cc519",
+      "username": "d10xa"
+    },
+    "service": {
+      "hostname": "d10xa.ru",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1573384962,
+  "expire_in": 157680000,
+  "prev": "320ed548a398261e08da3adf20c26ef3a509dd7dc958cede06331f593b9ddb68",
+  "seqno": 10,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+
+owGtkm1MFEcYx+/AKmqtp1ak1KbpCgkJB+zu3M7uUsSEtElrSRuNUbTqZXZnFjcH
+e+fuHsdxvb4ZNGC0RTFabFKpxhZFDNQexNb0jVZi21QBeZE2ocW+YUUsabBisbOk
+Jv3Qj50vk/nP//97nmcyry9IdqW4raNreq4+nLzS/eWvimvL+Ym8GKMEcZTJjzEB
+MrORMkws2x/QMZPPsBzLyZiXkAJ4QcOypkFRIbyP5QReREjTNCzyAqv6MCsCgBAh
+GsdDBWGiESIBQZUEyCLGy2i6UUrMkKkbNsUKgAdAhRxWfADSPKQ5kdIVLCIgIJ5e
+QYHTZBrcFrScBG1OQRbJ1YNUowf/THv/4f+f+w7P4KCsSBCLsggUTqBuVdI4EUNN
+IqKqCpxTN2wR00DlhLoxx1YiJu5lqFShq8R5VWeMf1/nmmEaCplBO6gGy6i6zbZD
+Vr6TsqMhxxYhiv8fgF/RDUwfkCYqiGnpQYPJ56hTtXWHyAl0BsknQ97LkMqQbhK/
+bszIUGLpcuqQCooEPEuw4JMQkCUeruUIK2EEENZ4VuUh0QASWBljEauyIKkEExYC
+wGmCDBQqK1BinJm2G0EKp1QblVKopZcayA6bhInPq3G/N8vlTnE9kvrYrM++aKmu
+G2IPL8ne8/G9X3dfkvPlXPPmeu4pfd/d73ptRWGtu1gt+qgn+/gZsOiJK6c79948
+3HDip/LqSK659M3EdETM2nCt8NvExq4jt+NdLmn/U/OHbu2+fNZvDKWOVIbHqjw3
+zi1ra7/ZcHLT+2tHNnc07jyIp/hVjGfRjvMPfJ7xwuicO9nLxiYqbxx9ZVLPqG6K
+h7IGdpD0kqq+twuqx/I2pzyb0hpPb/rz7POflok/Dl/acCLy0M9zcvLSEz/4A2Nz
+O8oXFJzcsnP+7frF3YPPpWU1XELDrZ/0Ts6eWPhg7FjdV7WHvPXRopZm17sVW92Z
+NePfJ5Lqvdd3Jb3Y3NySt7wnLdabefeZ6MUjzP5o8YF4TuTQSzW5fVeVC3XhxeNt
+39y6tmp54ZlH98Warp8+2D+4qz91unvhb6l7V9/5vTOcsW6FNbCm4On23jYuMfnO
+qyVfT+9zf2DvCW//5Vyj59SVv6ZaldDK0sBb8G57iXyxtWF46fquC42nui8PLCnq
+fzKz8I/aqk7ZeHzrSHLaqHxgfccbxSrKmfrwmDB70CO+PL6bGQ38DQ==
+=W0Wk
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/d10xa
+
+==================================================================
