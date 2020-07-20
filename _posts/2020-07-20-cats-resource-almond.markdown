@@ -25,28 +25,29 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import cats.implicits._
 
-val blockingPool = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(5))
-implicit val cs: ContextShift[IO] = IO.contextShift(blockingPool) // or scala.concurrent.ExecutionContext.global
-def resourceDefer[F[_]: Concurrent: ContextShift, A](resource: Resource[F, A]): F[(Either[Throwable, A], Deferred[F, Unit])] =
-    for {
-        deferred <- Deferred[F, Unit]
-        mvar <- MVar.empty[F, Either[Throwable, A]]
-        _ <- Concurrent[F].start(
-            resource
-                .use(r => mvar.put(r.asRight).flatMap(_ => deferred.get))
-                .recoverWith(e => mvar.put(e.asLeft).flatMap(_ => deferred.get))
-        )
-        resourceAcquired <- mvar.read
-    } yield (resourceAcquired, deferred)
+val blockingPool =
+    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(5))
+// or scala.concurrent.ExecutionContext.global
+implicit val cs: ContextShift[IO] = IO.contextShift(blockingPool)
+def resourceDefer[F[_]: Concurrent: ContextShift, A](
+  resource: Resource[F, A]): F[(Either[Throwable, A], Deferred[F, Unit])] =
+  for {
+    deferred <- Deferred[F, Unit]
+    mvar <- MVar.empty[F, Either[Throwable, A]]
+    _ <- Concurrent[F].start(
+      resource
+        .use(r => mvar.put(r.asRight).flatMap(_ => deferred.get))
+        .recoverWith(e => mvar.put(e.asLeft).flatMap(_ => deferred.get))
+    )
+    resourceAcquired <- mvar.read
+  } yield (resourceAcquired, deferred)
 def resourceUseInAlmondBackground[A](resource: Resource[IO, A]): A =
-    resourceDefer[IO, A](resource).map { 
-        case (Right(r), deferred) =>
-            interp.beforeExitHooks += { _ =>
-                deferred.complete().unsafeRunSync
-            }
-            r
-        case (Left(e), _) => throw e
-    }.unsafeRunSync
-
-
+  resourceDefer[IO, A](resource).map {
+    case (Right(r), deferred) =>
+      interp.beforeExitHooks += { _ =>
+        deferred.complete().unsafeRunSync
+      }
+      r
+    case (Left(e), _) => throw e
+  }.unsafeRunSync
 ```
