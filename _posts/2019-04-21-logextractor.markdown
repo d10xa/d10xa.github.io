@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "pet project. logextractor"
+title:  "rust. pet project. logextractor"
 date:   2019-04-21 20:00:00
 categories: logextractor rust
 permalink: /logextractor
