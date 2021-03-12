@@ -10,11 +10,10 @@ permalink: /sbt-project-bintray-publish
 
 ## Добавление git плагина (для вытаскивания версий из тега)
 
-1) Добавляем sbt плагины в `project/plugins.sbt`
+1) Добавляем sbt-git плагин в `project/plugins.sbt`
 
 ```sbt
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "latest.release")
-addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
 ```
 
 2) Редактируем build.sbt
@@ -48,7 +47,13 @@ licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
 
 ## Настройка CI / github workflows
 
-1) Создаём файл `.github/workflows/publish.yml`:
+1) Добавляем sbt-bintray плагин в `project/plugins.sbt`
+
+```sbt
+addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
+```
+
+2) Создаём файл `.github/workflows/publish.yml`:
 
 ```yaml
 name: Bintray publish
@@ -78,11 +83,11 @@ jobs:
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
 ```
 
-2) Достаём API Key из bintray
+3) Достаём API Key из bintray
 
 Edit Profile -> API Key -> Copy To Clipboard
 
-3) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
+4) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
 
 На гитхабе Settings -> Secrets -> New Repository Secret
 
