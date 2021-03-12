@@ -24,6 +24,30 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "latest.release")
 enablePlugins(GitVersioning)
 ```
 
+Удаляем явное указание версии:
+
+```sbt
+version := "0.1.2" // Удалить
+```
+
+## Настройка CI / github workflows
+
+1) Добавляем sbt-bintray плагин в `project/plugins.sbt`
+
+```
+!!! WARNING: !!!
+
+https://github.com/sbt/sbt-bintray
+This repository has been archived by the owner. It is now read-only.
+```
+
+
+```sbt
+addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
+```
+
+2) Редактируем build.sbt
+
 Имя и организация. Влияет на название пакета (`organization %% name % version`)
 
 ```sbt
@@ -45,15 +69,7 @@ licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
 ```
 
-## Настройка CI / github workflows
-
-1) Добавляем sbt-bintray плагин в `project/plugins.sbt`
-
-```sbt
-addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
-```
-
-2) Создаём файл `.github/workflows/publish.yml`:
+3) Создаём файл `.github/workflows/publish.yml`:
 
 ```yaml
 name: Bintray publish
@@ -83,11 +99,11 @@ jobs:
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}{% endraw %}
 ```
 
-3) Достаём API Key из bintray
+4) Достаём API Key из bintray
 
 Edit Profile -> API Key -> Copy To Clipboard
 
-4) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
+5) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
 
 На гитхабе Settings -> Secrets -> New Repository Secret
 
