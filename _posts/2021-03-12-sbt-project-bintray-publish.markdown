@@ -110,3 +110,25 @@ jobs:
 На гитхабе Settings -> Secrets -> New Repository Secret
 
 в переменную BINTRAY_PASS вставляем API Key
+
+## Публикация новой версии пакета
+
+Создаём тег. Тег начинается с `v`:
+
+`git tag v0.1.4`
+
+`git push --tags`
+
+В гитхабе создаём релиз:
+
+Releases -> v0.1.4 -> Edit tag
+
+Вписываем Release title `0.1.4` и добавляем Release notes (потом можно редактировать)
+
+-> Publish release
+
+В этот момент запускается билд и публикация
+
+Actions -> Bintray publish -> 0.1.4
+
+Готово
