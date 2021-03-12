@@ -30,7 +30,7 @@ enablePlugins(GitVersioning)
 version := "0.1.2" // Удалить
 ```
 
-## Настройка CI / github workflows
+## Конфигурация для bintray
 
 1) Добавляем sbt-bintray плагин в `project/plugins.sbt`
 
@@ -69,7 +69,9 @@ licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
 ```
 
-3) Создаём файл `.github/workflows/publish.yml`:
+## Настройка github workflows
+
+1) Создаём файл `.github/workflows/publish.yml`:
 
 ```yaml
 name: Bintray publish
@@ -99,11 +101,11 @@ jobs:
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}{% endraw %}
 ```
 
-4) Достаём API Key из bintray
+2) Достаём API Key из bintray
 
 Edit Profile -> API Key -> Copy To Clipboard
 
-5) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
+3) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
 
 На гитхабе Settings -> Secrets -> New Repository Secret
 
