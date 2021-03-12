@@ -79,8 +79,8 @@ jobs:
     - name: Publish
       run: sbt publish
       env:
-        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
+        {% raw %}BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}{% endraw %}
 ```
 
 3) Достаём API Key из bintray
