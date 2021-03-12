@@ -24,7 +24,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "latest.release")
 enablePlugins(GitVersioning)
 ```
 
-Имя и организация. Влияет на название пакета (`organization % name % version`)
+Имя и организация. Влияет на название пакета (`organization %% name % version`)
 
 ```sbt
 name := "my-project"
