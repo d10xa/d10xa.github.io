@@ -103,7 +103,7 @@ jobs:
 
 2) Достаём API Key из bintray
 
-Edit Profile -> API Key -> Copy To Clipboard
+[Edit Profile](https://bintray.com/profile/edit) -> API Key -> Copy To Clipboard
 
 3) Устанавливаем переменные `BINTRAY_USER`, `BINTRAY_PASS` для github workflows
 
