@@ -131,4 +131,24 @@ Releases -> v0.1.4 -> Edit tag
 
 Actions -> Bintray publish -> 0.1.4
 
-Готово
+## Подключение опубликованного пакета
+
+Ammonite / Almond
+
+```sbt
+interp.repositories() ++= Seq(
+  coursierapi.MavenRepository
+    .of("https://dl.bintray.com/username/maven")
+)
+```
+
+```sbt
+import $ivy.`com.example::my-project:0.1.4`
+```
+
+SBT
+
+```sbt
+resolvers += Resolver.bintrayRepo("username", "maven")
+libraryDependencies += "com.example" %% "my-project" % "0.1.4"
+```
