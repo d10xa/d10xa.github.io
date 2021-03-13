@@ -12,7 +12,7 @@ permalink: /sbt-project-bintray-publish
 
 1) Добавляем sbt-git плагин в `project/plugins.sbt`
 
-```sbt
+```scala
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "latest.release")
 ```
 
@@ -20,13 +20,13 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "latest.release")
 
 Включаем git плагин для чтения названия тега:
 
-```sbt
+```scala
 enablePlugins(GitVersioning)
 ```
 
 Удаляем явное указание версии:
 
-```sbt
+```scala
 version := "0.1.2" // Удалить
 ```
 
@@ -42,7 +42,7 @@ This repository has been archived by the owner. It is now read-only.
 ```
 
 
-```sbt
+```scala
 addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
 ```
 
@@ -50,20 +50,20 @@ addSbtPlugin("org.foundweekends" % "sbt-bintray" % "latest.release")
 
 Имя и организация. Влияет на название пакета (`organization %% name % version`)
 
-```sbt
+```scala
 name := "my-project"
 organization := "com.example"
 ```
 
 Ссылка на github репозиторий будет добавлена к bintray пакету:
 
-```sbt
+```scala
 bintrayVcsUrl := Some("https://github.com/username/repository.git")
 ```
 
 Указывать лицензию - обязательно:
 
-```sbt
+```scala
 licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 // или
 licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
@@ -135,20 +135,20 @@ Actions -> Bintray publish -> 0.1.4
 
 Ammonite / Almond
 
-```sbt
+```scala
 interp.repositories() ++= Seq(
   coursierapi.MavenRepository
     .of("https://dl.bintray.com/username/maven")
 )
 ```
 
-```sbt
+```scala
 import $ivy.`com.example::my-project:0.1.4`
 ```
 
 SBT
 
-```sbt
+```scala
 resolvers += Resolver.bintrayRepo("username", "maven")
 libraryDependencies += "com.example" %% "my-project" % "0.1.4"
 ```
