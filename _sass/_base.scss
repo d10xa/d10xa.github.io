@@ -80,7 +80,7 @@ li {
  * Headings
  */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 300;
+    font-weight: 500;
 }
 
 
@@ -109,9 +109,9 @@ a {
  */
 blockquote {
     color: $grey-color;
-    border-left: 4px solid $grey-color-light;
+    border-left: 1px solid $grey-color-light;
     padding-left: $spacing-unit / 2;
-    font-size: 18px;
+    font-size: 12px;
     letter-spacing: -1px;
     font-style: italic;
 
@@ -138,7 +138,7 @@ code {
 }
 
 pre {
-    padding: 8px 12px;
+    padding: 1px 1px;
     overflow-x: scroll;
 
     > code {
