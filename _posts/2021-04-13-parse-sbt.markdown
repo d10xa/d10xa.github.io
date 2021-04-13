@@ -1,0 +1,455 @@
+---
+layout: post
+title:  "Парсинг зависимостей из sbt файлов"
+date:   2021-04-13
+categories: scala
+permalink: /parse-sbt
+---
+
+Опишу одну из доработок sbt парсера для проекта [jadd](https://github.com/d10xa/jadd/). 
+Парсер основан на [scalameta](https://scalameta.org/) и занимается 
+вытаскиванием зависимостей из build файлов проекта.
+
+## Зачем пишу эту статью?
+
+Я нашел и исправил пару багов пока писал. Значит, пишу не зря. 
+Это не последнее изменение sbt парсера в этом проекте и 
+мне самому будет полезно перечитать этот пост спустя некоторое время.
+
+## Предыстория
+
+Имплементация №1 была на antlr + регулярные выражения.
+Я [пытался](https://d10xa.ru/2018/09/antlr) сделать валидный lexer+parser для sbt,
+у меня не получилось довести это до рабочего состояния и я решил упростить себе задачу.
+Я регулярками доставал куски кода, похожие на зависимости и
+отдавал их простенькому
+[antlr парсеру](https://github.com/d10xa/jadd/blob/e6245d4b60074498ede96c1c20b8060ba6afc10c/src/main/antlr/SbtDependencies.g4).
+Версии в sbt зависимостях иногда выносят в переменные (иногда в другие файлы, в директории project),
+их я доставал регулярками и подставлял в нужные места(ну или не всегда нужные)
+Эта реализация была очень даже рабочей, несмотря на костыльность.
+
+Имплементация №2. Объявления модулей и версии доставались
+уже не регулярками и antlr, а более удобным способом - паттерн матчингом на Scalameta деревьях.
+Версии библиотек точно так же искались по совпадению имени переменной. 
+
+## better sbt parser
+
+[https://github.com/d10xa/jadd/pull/358](https://github.com/d10xa/jadd/pull/358)
+
+Это уже 3я по счету имплементация одного и того же.
+
+Цель: уметь парсить более сложные объявления зависимостей. Например, такие:
+
+```scala
+val versions = new {
+  val x = new {
+    val v = "1"
+  }
+}
+libraryDependencies += "a" %% "b" % versions.x.v
+```
+
+Из этого кода нужно вытащить `"a" %% "b" %% "1"`, и при этом запомнить местоположение 
+объявления константы `"1"`, для дальнейшей модификации.
+
+## Упрощенное дерево SbtTree
+
+В билд файлах есть не только объявление зависимостей, но и много "лишнего".
+Я добавил свою структуру, повторяющую дерево из scalameta, но без шума. 
+
+SbtTree это sealed trait - упрощенное дерево
+для поиска зависимостей. Оно состоит из Scope, Module, Value.
+
+- Scope - деревьев общего вида.
+- Module - объявление зависимости ("a" % "aa" % aVersion)
+- Value - объявление строковой переменной (val aVersion = "3")
+
+## Действия по шагам
+
+Взял для примера такой исходный код файла build.sbt:
+
+```scala
+val versions = new {
+  val aVersion = "1" // not used
+  val bVersion = "2"
+}
+val dependencies = {
+  val aVersion = "3"
+  val bVersion = "4" // not used
+  val depA = "a" % "aa" % aVersion
+  val depB = "b" % "bb" % versions.bVersion
+}
+```
+
+Зависимость a:aa должна подставить aVersion из ближайшей области видимости,
+то есть значение 3.
+Зависимость b:bb из текущей области видимости ничего подставить не может,
+но чуть выше есть подходящий объект versions, внутри которго объявлена 
+константа bVersion со значением 2 - то, что надо.
+
+Схема создана помочь верхнеуровнево понять действия при парсинге,
+который я подробнее опишу по шагам ниже.
+
+![parse sbt activity diagram](/images/parse-sbt-activity-diagram.png)
+
+В дальнейшем я пользуюсь библиотекой
+[pprint](https://com-lihaoyi.github.io/PPrint/) для вывода в удобочитаемом
+виде case class'ов. (Дальше код не всегда валидный, например 
+`Self(name = , decltpe = None)`, но это output от pprintln как есть)
+
+Распарсил исходник с помощью scalameta и получил AST:
+
+```scala
+Source(
+  stats = List(
+    Defn.Val(
+      mods = List(),
+      pats = List(Pat.Var(name = Term.Name(value = "versions"))),
+      decltpe = None,
+      rhs = Term.NewAnonymous(
+        templ = Template(
+          early = List(),
+          inits = List(),
+          self = Self(name = , decltpe = None),
+          stats = List(
+            Defn.Val(
+              mods = List(),
+              pats = List(Pat.Var(name = Term.Name(value = "aVersion"))),
+              decltpe = None,
+              rhs = Lit.String(value = "1")
+            ),
+            Defn.Val(
+              mods = List(),
+              pats = List(Pat.Var(name = Term.Name(value = "bVersion"))),
+              decltpe = None,
+              rhs = Lit.String(value = "2")
+            )
+          ),
+          derives = List()
+        )
+      )
+    ),
+    Defn.Val(
+      mods = List(),
+      pats = List(Pat.Var(name = Term.Name(value = "dependencies"))),
+      decltpe = None,
+      rhs = Term.Block(
+        stats = List(
+          Defn.Val(
+            mods = List(),
+            pats = List(Pat.Var(name = Term.Name(value = "aVersion"))),
+            decltpe = None,
+            rhs = Lit.String(value = "3")
+          ),
+          Defn.Val(
+            mods = List(),
+            pats = List(Pat.Var(name = Term.Name(value = "bVersion"))),
+            decltpe = None,
+            rhs = Lit.String(value = "4")
+          ),
+          Defn.Val(
+            mods = List(),
+            pats = List(Pat.Var(name = Term.Name(value = "depA"))),
+            decltpe = None,
+            rhs = Term.ApplyInfix(
+              lhs = Term.ApplyInfix(
+                lhs = Lit.String(value = "a"),
+                op = Term.Name(value = "%"),
+                targs = List(),
+                args = List(Lit.String(value = "aa"))
+              ),
+              op = Term.Name(value = "%"),
+              targs = List(),
+              args = List(Term.Name(value = "aVersion"))
+            )
+          ),
+          Defn.Val(
+            mods = List(),
+            pats = List(Pat.Var(name = Term.Name(value = "depB"))),
+            decltpe = None,
+            rhs = Term.ApplyInfix(
+              lhs = Term.ApplyInfix(
+                lhs = Lit.String(value = "b"),
+                op = Term.Name(value = "%"),
+                targs = List(),
+                args = List(Lit.String(value = "bb"))
+              ),
+              op = Term.Name(value = "%"),
+              targs = List(),
+              args = List(
+                Term.Select(
+                  qual = Term.Name(value = "versions"),
+                  name = Term.Name(value = "bVersion")
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+С таким деревом сложно работать, слишком много шума. Преобразую структуру в 
+SbtTree(описал выше), выкинув всё "лишнее".
+Функция eval занимается паттерн матчингом кода.
+Ищет объявление зависимостей ("a" % "aa" % v) или строк(val v = "1").
+Преобразует scala.meta.Tree в Option[SbtTree] игнорируя всё "лишнее"
+
+```scala
+Vector(
+  Scope(
+    name = None,
+    items = Vector(
+      Scope(
+        name = Some(value = "versions"),
+        items = Vector(
+          Value(path = Vector("aVersion"), value = "1"),
+          Value(path = Vector("bVersion"), value = "2")
+        )
+      ),
+      Scope(
+        name = Some(value = "dependencies"),
+        items = Vector(
+          Scope(
+            name = None,
+            items = Vector(
+              Value(path = Vector("aVersion"), value = "3"),
+              Value(path = Vector("bVersion"), value = "4"),
+              Scope(
+                name = Some(value = "depA"),
+                items = Vector(
+                  Module(
+                    groupId = LitString(value = "a"),
+                    percentsCount = 1,
+                    artifactId = LitString(value = "aa"),
+                    version = TermNameCompound(values = Vector("aVersion")),
+                    terms = List()
+                  )
+                )
+              ),
+              Scope(
+                name = Some(value = "depB"),
+                items = Vector(
+                  Module(
+                    groupId = LitString(value = "b"),
+                    percentsCount = 1,
+                    artifactId = LitString(value = "bb"),
+                    version = TermNameCompound(values = Vector("versions", "bVersion")),
+                    terms = List()
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+Вложенность Scope глубже чем хотелось бы, и нужные версии 
+не всегда лежат в пределах одной области видимости (Scope). 
+Функция loopReduce выносит все элементы дерева ближе к
+корню и делает это до тех пор, пока дерево не перестанет меняться,
+попутно проставляя версии, лежащие в рамках 
+одной Scope(обратить внимание на зависимость a:aa)
+
+```scala
+Scope(
+  name = None,
+  items = Vector(
+    Value(path = Vector("versions", "aVersion"), value = "1"),
+    Value(path = Vector("versions", "bVersion"), value = "2"),
+    Scope(
+      name = Some(value = "dependencies"),
+      items = Vector(
+        Scope(
+          name = None,
+          items = Vector(
+            Value(path = Vector("aVersion"), value = "3"),
+            Value(path = Vector("bVersion"), value = "4"),
+            Module(
+              groupId = LitString(value = "a"),
+              percentsCount = 1,
+              artifactId = LitString(value = "aa"),
+              version = LitString(value = "3"),
+              terms = List()
+            ),
+            Module(
+              groupId = LitString(value = "b"),
+              percentsCount = 1,
+              artifactId = LitString(value = "bb"),
+              version = TermNameCompound(values = Vector("versions", "bVersion")),
+              terms = List()
+            )
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+Функция substituteVersionTree вызывается когда дерево стало максимально "низким".
+Подставляет версии из разных областей видимости.
+
+```scala
+Scope(
+  name = None,
+  items = Vector(
+    Scope(
+      name = Some(value = "dependencies"),
+      items = Vector(
+        Scope(
+          name = None,
+          items = Vector(
+            Module(
+              groupId = LitString(value = "a"),
+              percentsCount = 1,
+              artifactId = LitString(value = "aa"),
+              version = LitString(value = "3"),
+              terms = List()
+            ),
+            Module(
+              groupId = LitString(value = "b"),
+              percentsCount = 1,
+              artifactId = LitString(value = "bb"),
+              version = LitString(value = "2"),
+              terms = List()
+            )
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+## Чуть подробнее про scalameta
+
+После долгих мучений с antlr, очень приятно рабоать с AST, используя scalameta.
+Почему я сразу не взял scalameta? Я просто не знал о нём.
+
+В scalameta есть поддержка [паттерн матчинга на квазиквотах](https://scalameta.org/docs/trees/quasiquotes.html),
+но я не знаю будет ли оно работать в scala3, поэтому не пользуюсь.
+
+Допустим, есть задача распарсить следующий код:
+
+`libraryDependencies += "com.lihaoyi" %% "pprint" % "0.6.2"`
+
+Посмотрим на AST
+
+```scala
+import scala.util.chaining._
+import scala.meta._
+dialects
+  .Sbt1("""libraryDependencies += "com.lihaoyi" %% "pprint" % "0.6.2"""")
+  .parse[Source]
+  .get
+  .pipe(pprint.pprintln(_))
+```
+
+```scala
+Source(
+  stats = List(
+    Term.ApplyInfix(
+      lhs = Term.Name(value = "libraryDependencies"),
+      op = Term.Name(value = "+="),
+      targs = List(),
+      args = List(
+        Term.ApplyInfix(
+          lhs = Term.ApplyInfix(
+            lhs = Lit.String(value = "com.lihaoyi"),
+            op = Term.Name(value = "%%"),
+            targs = List(),
+            args = List(Lit.String(value = "pprint"))
+          ),
+          op = Term.Name(value = "%"),
+          targs = List(),
+          args = List(Lit.String(value = "0.6.2"))
+        )
+      )
+    )
+  )
+)
+
+```
+
+
+Простейшая функция, способная достать эту зависимость:
+
+```scala
+def eval(t: Tree): List[(String, String, String)] = t match {
+  case Source(value) => value.flatMap(eval)
+  case Term.ApplyInfix(
+        Term.Name("libraryDependencies"),
+        Term.Name("+="),
+        targs,
+        args
+      ) =>
+    args.flatMap(eval)
+  case Term.ApplyInfix(
+        Term.ApplyInfix(
+          Lit.String(groupId),
+          Term.Name("%%"),
+          List(),
+          List(Lit.String(artifactId))
+        ),
+        Term.Name("%"),
+        List(),
+        List(Lit.String(version))
+      ) =>
+    List((groupId, artifactId, version))
+}
+```
+
+Чего нехватает функции eval?
+
+- match не покрывает все возможные варианты
+- В sbt файле могут быть различные блоки, объявления классов, объявления функций, констант и т.д.
+- Между groupId и artifactId процентов %% может быть 1, 2 и 3
+- нужно уметь не только inline-версии парсить, но и уметь подставлять переменные
+- ModuleId может иметь scope ("org.scalatest" %% "scalatest" % "3.2.6" % "it,test")
+
+Допустим, следующим шагом мы хотим понять сколько процентов между artifactId и groupId. Создадим unapply для процентов 
+и заменим нижний case из паттерн матчинга в функции eval.
+
+```scala
+object UnapplyPercentChars {
+  def unapply(s: String): Option[Int] =
+    if (s.nonEmpty && s.forall(_ == '%')) {
+      Some(s.length)
+    } else {
+      None
+    }
+}
+```
+
+```scala
+// ...
+case Term.ApplyInfix(
+  Term.ApplyInfix(
+    Lit.String(groupId),
+    Term.Name(UnapplyPercentChars(count)),
+    List(),
+    List(Lit.String(artifactId))
+  ),
+  Term.Name("%"),
+  List(),
+  List(Lit.String(version))
+) =>
+  List(
+    (
+      groupId,
+      if (count == 2) s"${artifactId}_2.13" else artifactId,
+      version
+    )
+  )
+```
+
+Отсальные пункты из списка делаются аналогично, за исключением подставления переменных.
+Не буду описывать последующие шаги, код при желании 
+можно посмотреть в [Pull Request #358](https://github.com/d10xa/jadd/pull/358)
