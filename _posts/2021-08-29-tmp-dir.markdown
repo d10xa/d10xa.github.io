@@ -1,0 +1,268 @@
+---
+layout: post
+title:  "Тесты с временной директорией"
+date:   2021-08-29
+categories: scala
+permalink: /tmp-dir
+---
+
+Если ваш код работает с файлами, для его тестирования нужны временные директории.
+Директории нужно создавать, наполнять тестовым содержимым и удалять после 
+прогона тестов.
+
+Тесты с временными файлами я неоднократно писал на java,
+groovy и даже на scala. В этот раз решил зафиксировать в блоге scala реализацию
+(Да, что бы копипастить в следующие проекты).
+
+В посте покажу 2 реализации:
+
+1. грязные функции с эксэпшенами
+2. `F[_]: Sync` и cats.effect.Resource
+
+## Грязные функции
+
+Начинаем с проектирования.
+Для тестов мне нужны только текстовые файлы, поэтому метод будет
+принимать varargs с именами файлов и содержимым.
+Имя файла и контент пусть будут строками (В тестах обойдусь без 
+refined и имплиситов)
+
+Сигнатура функции может выглядеть следующим образом:
+
+```scala
+def withTempDirectory[A](files: (String, String)*)(f: Path => A): A
+```
+
+Пример теста:
+
+```scala
+val sum: Int = withTempDirectory(
+  "dir1/a.txt" -> "1",
+  "dir2/b.txt" -> "2"
+)(path =>
+  Files
+    .walk(path)
+    .iterator()
+    .asScala
+    .filter(Files.isRegularFile(_))
+    .map(Files.readString)
+    .map(_.toInt)
+    .sum
+)
+assert(sum == 3)
+```
+
+Начнём со вспомогательных функций.
+
+Удаление непустой директории. Метод postVisitDirectory вызывается,
+когда на всех внутренних файлах уже был вызван visitFile.
+
+```scala
+def deleteDirectoryRecursively(path: Path): Unit =
+  Files.walkFileTree(
+    path,
+    new SimpleFileVisitor[Path] {
+      override def postVisitDirectory(
+          dir: Path,
+          exc: IOException
+      ): FileVisitResult = {
+        Files.delete(dir)
+        FileVisitResult.CONTINUE
+      }
+      override def visitFile(
+          file: Path,
+          attrs: BasicFileAttributes
+      ): FileVisitResult = {
+        Files.delete(file)
+        FileVisitResult.CONTINUE
+      }
+    }
+  )
+```
+
+Проверка, что удаляемый файл находится внутри временной директории.
+Для путей вида `dir2/../dir1/b.txt` необходима нормализация.
+
+```scala
+def isInside(parent: Path, child: Path): Boolean =
+  child
+    .normalize()
+    .toAbsolutePath
+    .startsWith(parent.normalize().toAbsolutePath)
+```
+
+Создание родительских директорий и запись текста в файл
+
+```scala
+def write(
+    path: Path,
+    text: String,
+    openOptions: Seq[OpenOption] = Seq.empty,
+    charset: Charset = Charset.defaultCharset()
+): Path =
+  Files.createDirectories(path.getParent)
+  Files.write(path, text.getBytes(charset), openOptions: _*)
+```
+
+Вспомогательные функции готовы, переходим к реализации `withTempDirectory`.
+
+1. Создаём временную директорию
+2. Создаём файлы внутри
+3. В случае успеха, выполняем пользовательскую функцию
+4. Удаляем директорию, даже если не удалось создать файлы или произошла ошибка в пользовательской функции
+
+```scala
+def withTempDirectory[A](files: (String, String)*)(f: Path => A): A =
+  val dir = Files.createTempDirectory("java_nio_tmp_dir")
+  val t = Try {
+    files.foreach { case (localPath, content) =>
+      val resolved = dir.resolve(localPath)
+      if (!isInside(dir, resolved))
+        throw new IllegalArgumentException(
+          s"child file is outside of parent directory (${dir.toString}, ${resolved.toString})"
+        )
+      write(resolved, content)
+    }
+  }
+  val tryResult = t.map(_ => f(dir))
+  deleteDirectoryRecursively(dir)
+  tryResult.get
+```
+
+## котоэффекты
+
+Для тестовой директории идеально подходит cats.effect.Resource:
+
+```scala
+def tempDirectory(files: (String, String)*): Resource[F, Path]
+```
+
+Котовые ресурсы можно мапить в нужный для тестов тип, например java.io.File:
+
+```scala
+def tempDirectoryJavaFile(
+  files: (String, String)*
+): Resource[F, java.io.File] =
+  tempDirectory(files: _*).map(_.toFile)
+```
+
+Код тестов несколько изменился:
+
+```scala
+FilesF[IO]
+  .tempDirectory(
+    "dir1/a.txt" -> "1",
+    "dir2/b.txt" -> "2"
+  )
+  .use(path =>
+    Sync[IO].interruptible(true)(
+      Files
+        .walk(path)
+        .iterator()
+        .asScala
+        .filter(Files.isRegularFile(_))
+        .map(Files.readString)
+        .map(_.toInt)
+        .sum
+    )
+  )
+  .flatMap { sum =>
+    IO(assert(sum == 3))
+  }
+```
+
+Следующий код повторяет код из грязных функций выше, но теперь функции возвращают `F[_]`.
+
+```scala
+import cats.effect.IO
+import cats.effect.IOApp
+import cats.effect.Resource
+import cats.effect.Sync
+import cats.syntax.all.*
+
+import java.io.IOException
+import java.nio.charset.Charset
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.OpenOption
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import scala.jdk.CollectionConverters.*
+import scala.util.Try
+
+class FilesF[F[_]: Sync]:
+  def deleteDirectoryRecursively(path: Path): F[Unit] =
+    Sync[F].interruptible(true) {
+      Files.walkFileTree(
+        path,
+        new SimpleFileVisitor[Path] {
+          override def postVisitDirectory(
+              dir: Path,
+              exc: IOException
+          ): FileVisitResult = {
+            Files.delete(dir)
+            FileVisitResult.CONTINUE
+          }
+
+          override def visitFile(
+              file: Path,
+              attrs: BasicFileAttributes
+          ): FileVisitResult = {
+            Files.delete(file)
+            FileVisitResult.CONTINUE
+          }
+        }
+      )
+    }
+
+  def createDirectories(path: Path): F[Unit] =
+    Sync[F].delay(Files.createDirectories(path.getParent))
+
+  def createTempDirectory(): F[Path] =
+    Sync[F].delay(Files.createTempDirectory("java_nio_tmp_dir"))
+
+  def write(
+      path: Path,
+      text: String,
+      openOptions: Seq[OpenOption] = Seq.empty,
+      charset: Charset = Charset.defaultCharset()
+  ): F[Unit] =
+    for
+      _ <- createDirectories(path)
+      _ <- Sync[F].interruptible(true) {
+        Files.write(path, text.getBytes(charset), openOptions: _*)
+      }
+    yield ()
+
+  def isInside(parent: Path, child: Path): Boolean =
+    child
+      .normalize()
+      .toAbsolutePath
+      .startsWith(parent.normalize().toAbsolutePath)
+
+  def tempDirectory(files: (String, String)*): Resource[F, Path] =
+    def acquire: F[Path] =
+      for
+        dir <- createTempDirectory()
+        _ <- files.traverse { case (localPath, content) =>
+          val resolved = dir.resolve(localPath)
+          if (!isInside(dir, resolved))
+            Sync[F].raiseError(
+              new IllegalArgumentException(
+                s"child file is outside of parent directory (${dir.toString}, ${resolved.toString})"
+              )
+            )
+          else
+            write(resolved, content)
+        }
+      yield dir
+    Resource.make[F, Path](acquire)(deleteDirectoryRecursively)
+
+```
+
+Если не нравится оборачивать каждое использование `java.nio` в Sync, 
+есть библиотека, делающая это за вас `"io.github.akiomik" %% "cats-nio-file"`
+
+Отдельный проект на github я не создавал под эти примеры.
