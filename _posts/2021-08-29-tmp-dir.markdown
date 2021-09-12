@@ -239,21 +239,24 @@ class FilesF[F[_]: Sync]:
       .toAbsolutePath
       .startsWith(parent.normalize().toAbsolutePath)
 
+  def fillDirectory(dir: Path, files: (String, String)*): F[Unit] =
+    files.traverse_ { case (localPath, content) =>
+      val resolved = dir.resolve(localPath)
+      if (!isInside(dir, resolved))
+        Sync[F].raiseError(
+          new IllegalArgumentException(
+            s"child file is outside of parent directory (${dir.toString}, ${resolved.toString})"
+          )
+        )
+      else
+        write(resolved, content)
+    }
+
   def tempDirectory(files: (String, String)*): Resource[F, Path] =
     def acquire: F[Path] =
       for
         dir <- createTempDirectory()
-        _ <- files.traverse { case (localPath, content) =>
-          val resolved = dir.resolve(localPath)
-          if (!isInside(dir, resolved))
-            Sync[F].raiseError(
-              new IllegalArgumentException(
-                s"child file is outside of parent directory (${dir.toString}, ${resolved.toString})"
-              )
-            )
-          else
-            write(resolved, content)
-        }
+        _ <- fillDirectory(dir, files: _*)
       yield dir
     Resource.make[F, Path](acquire)(deleteDirectoryRecursively)
 
