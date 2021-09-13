@@ -243,7 +243,7 @@ class FilesF[F[_]: Sync]:
     files.traverse_ { case (localPath, content) =>
       val resolved = dir.resolve(localPath)
       if (!isInside(dir, resolved))
-        Sync[F].raiseError(
+        Sync[F].raiseError[Unit](
           new IllegalArgumentException(
             s"child file is outside of parent directory (${dir.toString}, ${resolved.toString})"
           )
