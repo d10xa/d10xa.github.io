@@ -45,7 +45,7 @@ System Preferences ->  Keyboard
 
 (Если есть Touch Bar) Выбрать `Touch Bar shows [F1, F2, etc. Keys]`
 
-☑ `Use F1, F2, etc. keys as standard function keys`
+<div class="checkbox-selected"></div> `Use F1, F2, etc. keys as standard function keys`
 
 **⚠️ Modifier Keys нужно настраивать для внешних клавиатур отдельно.**
 
@@ -55,29 +55,29 @@ Keyboard -> Shortcuts -> Spotlight
 
 Убрать галки:
 
-☐ show spotlight search
+<div class="checkbox-empty"></div> show spotlight search
 
-☐ show finder search window
+<div class="checkbox-empty"></div> show finder search window
 
 Keyboard -> Text
 
 Убрать галки:
 
-☐ Correct spelling automatically
+<div class="checkbox-empty"></div> Correct spelling automatically
 
-☐ Capitalise words automatically
+<div class="checkbox-empty"></div> Capitalise words automatically
 
-☐ Add full stop with double-space
+<div class="checkbox-empty"></div> Add full stop with double-space
 
-☐ (Если есть Touch Bar) Touch Bar typing suggestions
+<div class="checkbox-empty"></div> (Если есть Touch Bar) Touch Bar typing suggestions
 
-☐ Use smart quotes and dashes
+<div class="checkbox-empty"></div> Use smart quotes and dashes
 
 Keyboard -> Shortcuts -> Input Sources
 
-☐ Select the previous input source
+<div class="checkbox-empty"></div> Select the previous input source
 
-☑ Select next source in Input menu **`⌘Space`**
+<div class="checkbox-selected"></div> Select next source in Input menu **`⌘Space`**
 
 В Menu Bar, иконка рядом с часами(настройки wifi, яркость, громкость): **Keyboard Brightness - 0**
 
@@ -85,7 +85,7 @@ Keyboard -> Shortcuts -> Input Sources
 
 System Preferences -> Battery -> Power Adapter -> Turn display off after: 45m
 
-☐ Enable Power Nap while plugged into a power adapter
+<div class="checkbox-empty"></div> Enable Power Nap while plugged into a power adapter
 
 ## Lock gesture
 
@@ -118,19 +118,19 @@ Begin Setup... Нужно читать и настраивать
 
 Features -> System
 
-☑ Eject
+<div class="checkbox-selected"></div> Eject
 
-☑ Eject All
+<div class="checkbox-selected"></div> Eject All
 
 Appearance -> Alfred macOS Dark
 
 Appearance -> Options
 
-☑ Hide hat on Alfred window
+<div class="checkbox-selected"></div> Hide hat on Alfred window
 
 Appearance -> Options
 
-☑ Hide menu bar icon
+<div class="checkbox-selected"></div> Hide menu bar icon
 
 ## Spectacle
 
@@ -175,7 +175,7 @@ Settings -> Tools -> Terminal -> Configure terminal keybindings -> Plugins -> Te
 
 Iterm2 -> Install Shell Integration
 
-Prefs -> General -> Closing -> ☐ Confirm Quit iTerm2 (убрать галочку)
+Prefs -> General -> Closing -> <div class="checkbox-empty"></div> Confirm Quit iTerm2 (убрать галочку)
 
 ## Dock
 
@@ -200,7 +200,7 @@ dockutil --add /Applications/iTerm.app --after 'Firefox'
 
 System Preferences -> Dock & Menu Bar
 
-☑ Automatically hide and show the Dock
+<div class="checkbox-selected"></div> Automatically hide and show the Dock
 
 ## Авторизация
 
