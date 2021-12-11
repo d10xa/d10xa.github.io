@@ -152,6 +152,8 @@ Top Half `⌃⌥⌘↑`
 
 Bottom Half `⌃⌥⌘↓`
 
+<div class="checkbox-selected"></div> Launch Spectacle at login
+
 В нижнем правом углу стрелочка > Run... > as a background application
 
 ## jetbrains-toolbox
