@@ -175,7 +175,9 @@ Settings -> Tools -> Terminal -> Configure terminal keybindings -> Plugins -> Te
 
 Iterm2 -> Install Shell Integration
 
-Prefs -> General -> Closing -> <div class="checkbox-empty"></div> Confirm Quit iTerm2 (убрать галочку)
+Prefs -> General -> Closing
+
+<div class="checkbox-empty"></div> Confirm Quit iTerm2
 
 ## Dock
 
