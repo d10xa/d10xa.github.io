@@ -50,3 +50,23 @@ $on-laptop:        800px;
         "layout",
         "syntax-highlighting"
 ;
+
+div.checkbox-selected {
+   content:url('/images/checkbox-selected.png');
+   display: inline-block;
+   float:left;
+   height: 0.7em;
+   margin-right: 5px;
+   margin-top: 0.3em;
+}
+
+
+div.checkbox-empty {
+   content:url('/images/checkbox-empty.png');
+   display: inline-block;
+   float:left;
+   height: 0.7em;
+   margin-right: 5px;
+   margin-top: 0.3em;
+}
+
