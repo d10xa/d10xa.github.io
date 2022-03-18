@@ -81,6 +81,10 @@ Keyboard -> Shortcuts -> Input Sources
 
 В Menu Bar, иконка рядом с часами(настройки wifi, яркость, громкость): **Keyboard Brightness - 0**
 
+## Trackpad
+
+Point & Click -> Tracking speed -> 6/10
+
 ## Battery
 
 System Preferences -> Battery -> Power Adapter -> Turn display off after: 45m
