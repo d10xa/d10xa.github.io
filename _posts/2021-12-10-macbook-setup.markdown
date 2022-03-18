@@ -83,6 +83,8 @@ Keyboard -> Shortcuts -> Input Sources
 
 ## Trackpad
 
+<div class="checkbox-selected"></div> Silent clicking
+
 Point & Click -> Tracking speed -> 6/10
 
 ## Battery
