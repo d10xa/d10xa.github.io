@@ -37,10 +37,16 @@ openssl req -x509 -new -nodes -key CA.key -sha256 -days 18250 -out CA.pem
 
 ## Установка сертификата в систему
 
-macos:
+macos добавление сертификата в keychain:
 
 ```
 sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" CA.pem
+```
+
+macos удаление сертификата из keychain:
+
+```
+sudo security remove-trusted-cert -d CA.pem
 ```
 
 ubuntu:
