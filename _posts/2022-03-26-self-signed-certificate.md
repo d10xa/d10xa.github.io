@@ -62,7 +62,7 @@ sudo update-ca-certificates
 ## Создание серверного ключа
 
 ```
-export DOMAIN=example.com
+export DOMAIN=domain.example.com
 openssl genrsa -out "$DOMAIN.key" 2048
 ```
 
