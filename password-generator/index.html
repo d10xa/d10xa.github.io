@@ -1,18 +1,22 @@
----
-layout: null
-title: Password Generator
-permalink: /password-generator/
----
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Offline Password Generator</title>
+  <meta charset="UTF-8">
+  <title>Offline Password Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div id="gen"></div>
-<script type="text/javascript" src="password-generator.js"></script>
-<script>
-      generate(document.getElementById("gen"));
-    </script>
+  <div id="gen"></div>
+  <style>
+    
+  </style>
+  <script type="text/javascript" src="./target/scala-3.2.1/scala-js-tutorial-fastopt/main.js"></script>
+  <script>
+    generate(document.getElementById("gen"));
+  </script>
 </body>
+
 </html>

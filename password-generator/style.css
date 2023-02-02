@@ -1,0 +1,90 @@
+html {
+    -webkit-box-sizing: inherit;
+    box-sizing: border-box;
+}
+
+*,
+*:after,
+*:before {
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.generator {
+    font-size: 16px;
+    min-width: 300px;
+    background-color: #fdfdfd;
+}
+
+.generator__password {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px
+}
+
+.generator__check {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px
+}
+.generator__check_input {
+    width: 20px;
+    height: 20px; 
+}
+.generator__hr {
+    border: 0px;
+    color: #aaa;
+    background-color: #aaa;
+    padding: 0px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-block: 0px;
+    height: 1px;
+}
+.generator__int_input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.generator__range_input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.password__p {
+    word-break: break-all;
+    white-space: normal;
+    width: 250px;
+    min-height: 75px;
+}
+/* .container-1 > label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .container-1 > input {
+    display: flex;
+    justify-content: flex-end;
+  } */
+
+@media (min-width : 320px) {
+
+    /* For mobile phones: */
+    #gen {
+        
+        /* border: 1px solid #777; */
+        /* font-size: 2rem; */
+        /* width: 100%; */
+    }
+}
