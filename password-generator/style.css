@@ -32,7 +32,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .generator__check_input {
     width: 20px;
@@ -40,8 +41,8 @@ body {
 }
 .generator__hr {
     border: 0px;
-    color: #aaa;
-    background-color: #aaa;
+    color: rgb(200, 200, 200);
+    background-color: rgb(200, 200, 200);
     padding: 0px;
     margin-left: 10px;
     margin-right: 10px;
@@ -52,13 +53,15 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .generator__range_input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .password__p {
     word-break: break-all;
@@ -66,17 +69,6 @@ body {
     width: 250px;
     min-height: 75px;
 }
-/* .container-1 > label {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .container-1 > input {
-    display: flex;
-    justify-content: flex-end;
-  } */
 
 @media (min-width : 320px) {
 
