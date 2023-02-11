@@ -20,9 +20,10 @@ permalink: /jira-chrome-site-search
 Settings - Search Engine - Manage search engines and site search - Site Search - Add
 
 Для примера с mvn repository вводим следующее:
-Search engine: mvnrepository
-Shortcut: mvn
-URL with %s in place of query: https://mvnrepository.com/search?q=%s
+
+- **Search engine:** mvnrepository
+- **Shortcut:** mvn
+- **URL with %s in place of query:** https://mvnrepository.com/search?q=%s
 
 ## Site Search для JIRA
 
