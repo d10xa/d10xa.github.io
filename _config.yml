@@ -3,7 +3,6 @@ email: d10xa@mail.ru
 description: Блог о программировании
 baseurl: ""
 url: "https://d10xa.ru"
-twitter_username: d100xa
 github_username:  d10xa
 
 markdown: kramdown
