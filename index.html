@@ -4,16 +4,30 @@ layout: default
 
 <div class="home">
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-          <span class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</span>
+    <ul class="post-list">
+        {% for page in site.pages %}
+        {% for pc in page.categories %}
+        {% if pc == 'app' %}
+        <li>
+            <h2>
+                <a class="post-link" href="{{ page.url | prepend: site.baseurl }}">(app) {{ page.title }}</a>
+            </h2>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </ul>
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
+    <ul class="post-list">
+        {% for post in site.posts %}
+        <li>
+            <span class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</span>
+
+            <h2>
+                <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            </h2>
+        </li>
+        {% endfor %}
+    </ul>
 
 </div>
