@@ -26,8 +26,13 @@ permalink: /safeincloud-to-bitwarden
 
 ## История моего перехода на bitwarden
 
-Bitwarden умеет импортировать базу SafeInCloud в формате xml. Я экспортировал базу через десктопное приложение SafeInCloud и импортировал в консольной версии Bitwarden. Bitwarden немного подумал и без ошибок завершил процесс. Я проверил несколько из своих записей и успокоился. Прошло несколько дней и я решил авторизоваться в гитхабе. Нашел запись github, но в ней не было пароля. Проверил другие записи и там тоже были утеряны пароли. Решил изучить исходники. Я ни когда не писал на typescript, но на поиск ошибки ушло менее 5ти минут. [Вот строки с ошибкой](https://github.com/bitwarden/jslib/blob/98c7dc162628129d0bddbf20359d389dacb661d3/src/importers/safeInCloudXmlImporter.ts#L72):
-
+Bitwarden умеет импортировать базу SafeInCloud в формате xml. Я экспортировал базу через десктопное приложение SafeInCloud и импортировал в консольной версии Bitwarden. Bitwarden немного подумал и без ошибок завершил процесс. Я проверил несколько из своих записей и успокоился. Прошло несколько дней и я решил авторизоваться в гитхабе. Нашел запись github, но в ней не было пароля. Проверил другие записи и там тоже были утеряны пароли. Решил изучить исходники. Я ни когда не писал на typescript, но на поиск ошибки ушло менее 5ти минут.
+Вот строки с ошибкой:
+<p class="filename">
+  <a href="https://github.com/bitwarden/jslib/blob/98c7dc162628129d0bddbf20359d389dacb661d3/src/importers/safeInCloudXmlImporter.ts#L72">
+    src/importers/safeInCloudXmlImporter.ts#L72
+  </a>
+</p>
 ```typescript
 Array.from(this.querySelectorAllDirectChild(cardEl, 'field')).forEach((fieldEl) => {
     const text = fieldEl.textContent;
