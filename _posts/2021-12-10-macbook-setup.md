@@ -18,16 +18,7 @@ Apple menu () > About This Mac > Software Update.
 
 ## Установка Homebrew
 
-Способ №1. С чтением скрипта
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/install-brew.sh
-less /tmp/install-brew.sh # Читаем
-/bin/bash /tmp/install-brew.sh
-rm /tmp/install-brew.sh
-```
-
-Способ №2. Одной строкой, как рекомендуется на официальном сайте [Homebrew](https://brew.sh/index_ru)
+https://brew.sh
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -35,8 +26,16 @@ rm /tmp/install-brew.sh
 
 Отключение Google Analytics. [Зачем Homebrew аналитика](https://docs.brew.sh/Analytics#why)
 
-```
+```bash
 brew analytics off
+```
+
+## yadm
+
+```bash
+brew install yadm
+yadm clone https://github.com/d10xa/dotfiles.git
+yadm bootstrap
 ```
 
 ## Клавиатура
@@ -59,7 +58,7 @@ Keyboard -> Shortcuts -> Spotlight
 
 <div class="checkbox-empty"></div> show finder search window
 
-Keyboard -> Text
+Keyboard -> Text (На более свежих macOs: Text Input -> Edit...)
 
 Убрать галки:
 
@@ -79,21 +78,35 @@ Keyboard -> Shortcuts -> Input Sources
 
 <div class="checkbox-selected"></div> Select next source in Input menu **`⌘Space`**
 
-В Menu Bar, иконка рядом с часами(настройки wifi, яркость, громкость): **Keyboard Brightness - 0**
-
 ## Trackpad
 
 <div class="checkbox-selected"></div> Silent clicking
 
 Point & Click -> Tracking speed -> 6/10
 
-## Battery
+## Turn display off
 
-System Preferences -> Battery -> Power Adapter -> Turn display off after: 45m
+Старый macOs:
 
+System Preferences -> Battery -> Power Adapter -> Turn display off after: 30m
+
+Новый macOs:
+
+System Preferences -> Lock Screen -> Turn display off on power adapter when inactive: for 30 minutes
+
+Старый macOs:
+
+System Preferences -> Battery -> Power Adapter ->
 <div class="checkbox-empty"></div> Enable Power Nap while plugged into a power adapter
 
+Новый macOs:
+
+System Preferences -> Battery -> Options... -> Wake for network access -> Never
+
+
 ## Lock gesture
+
+Старый macOs:
 
 System Preferences -> Desktop & Screen Saver -> Screen Saver -> Show screen saver after 30 minutes
 
@@ -101,60 +114,28 @@ System Preferences -> Desktop & Screen Saver -> Screen Saver -> Hot Corners... -
 
 System Preferences -> Security & Privacy -> General -> Require password **`[immediately]`** after sleep or screen saver begins
 
+Новый macOs:
+
+System Preferences -> Screen Saver -> Start Screen Saver when inactive -> For 30 minutes
+
+System Preferences -> Desktop & Dock -> Hot Corners... -> Start Screen Saver
+
+System Preferences -> Require password after screen saver begins or display is turned off -> **`[Immediately]`**
+
 ## App Store
 
 Установить:
 
 - Blackmagic Disk Speed Test 4+
-- Monosnap - screenshot editor
 
 ## Finder
 
 Добавить в боковую панель (Favourites):
 
 - `~`
+- `~/ghq/`
 - `~/ghq/github.com/`
-- `~/Pictures/Monosnap/`
 
-## Alfred
-
-alfred первый раз открывать через Launchpad (в нижнем меню)
-
-Begin Setup... Нужно читать и настраивать
-
-Features -> System
-
-<div class="checkbox-selected"></div> Eject
-
-<div class="checkbox-selected"></div> Eject All
-
-Appearance -> Alfred macOS Dark
-
-Appearance -> Options
-
-<div class="checkbox-selected"></div> Hide hat on Alfred window
-
-Appearance -> Options
-
-<div class="checkbox-selected"></div> Hide menu bar icon
-
-## Spectacle
-
-Previous Display - удалить шорткат
-
-Next Display `⌃⌥⌘↩`
-
-Left Half `⌃⌥⌘←`
-
-Right Half `⌃⌥⌘→`
-
-Top Half `⌃⌥⌘↑`
-
-Bottom Half `⌃⌥⌘↓`
-
-<div class="checkbox-selected"></div> Launch Spectacle at login
-
-В нижнем правом углу стрелочка > Run... > as a background application
 
 ## jetbrains-toolbox
 
@@ -193,7 +174,6 @@ Prefs -> General -> Closing
 dockutil --remove Messages
 dockutil --remove Mail
 dockutil --remove Maps
-dockutil --remove Photos
 dockutil --remove FaceTime
 dockutil --remove Contacts
 dockutil --remove TV
@@ -206,6 +186,8 @@ dockutil --remove 'Terminal'
 dockutil --add /Applications/Google\ Chrome.app  --after 'Launchpad'
 dockutil --add /Applications/Firefox.app --after 'Google Chrome'
 dockutil --add /Applications/iTerm.app --after 'Firefox'
+# Optionally
+dockutil --remove Photos
 ```
 
 System Preferences -> Dock & Menu Bar
