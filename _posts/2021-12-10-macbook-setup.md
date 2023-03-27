@@ -103,6 +103,9 @@ System Preferences -> Battery -> Power Adapter ->
 
 System Preferences -> Battery -> Options... -> Wake for network access -> Never
 
+## Убрать громкий звук при старте
+
+System Preferences -> Sound -> <div class="checkbox-empty"></div> Play sound on startup
 
 ## Lock gesture
 
