@@ -57,6 +57,7 @@ ssh-keygen -t ed25519 -C "example+account2@gmail.com" -f account2
 ```
 Host github-account2
     HostName github.com
+    User git
     AddKeysToAgent yes
     UseKeychain yes
     IdentityFile ~/.ssh/id_ed25519_account2
@@ -104,7 +105,7 @@ git clone git@github-account2:account2/test.git
 <p class="filename">~/.gitconfig</p>
 
 ```
-[url "ssh://git@github.com/account2"]
+[url "ssh://git@account2/account2"]
    insteadOf = https://github.com/account2
 ```
 
