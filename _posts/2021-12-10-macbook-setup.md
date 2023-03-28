@@ -48,7 +48,13 @@ System Preferences ->  Keyboard
 
 **⚠️ Modifier Keys нужно настраивать для внешних клавиатур отдельно.**
 
-Modifier Keys… -> Caps Lock Key: Control
+Старый macOs:
+
+    Modifier Keys… -> Caps Lock Key: Control
+
+Новый macOs:
+
+    Keyboard -> Keyboard Shortcuts -> Modifier Keys
 
 Keyboard -> Shortcuts -> Spotlight
 
