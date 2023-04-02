@@ -1,0 +1,17 @@
+services:
+  jekyll:
+    image: jekyll-arm
+    build:
+      context: .
+      dockerfile: ./arm.Dockerfile
+    volumes:
+      - ./:/srv/jekyll
+    ports:
+      - 4000:4000
+    command:
+      - jekyll
+      - serve
+      - --host
+      - 0.0.0.0
+      - --drafts
+      - --incremental
