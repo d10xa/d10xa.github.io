@@ -6,6 +6,10 @@ categories: macos
 permalink: /macbook-setup
 ---
 
+
+################
+
+
 ## Установка обновлений
 
 Apple menu () > About This Mac > Software Update.
@@ -33,6 +37,7 @@ brew analytics off
 ## yadm
 
 ```bash
+grep -q zshrc_local ~/.zshrc || mv ~/.zshrc{,_legacy}
 brew install yadm
 yadm clone https://github.com/d10xa/dotfiles.git
 yadm bootstrap
@@ -40,9 +45,17 @@ yadm bootstrap
 
 ## Клавиатура
 
+Старый macOs:
+
 System Preferences ->  Keyboard
 
 (Если есть Touch Bar) Выбрать `Touch Bar shows [F1, F2, etc. Keys]`
+
+<div class="checkbox-selected"></div> `Use F1, F2, etc. keys as standard function keys`
+
+Новый macOs:
+
+System Settings -> Keyboard -> Keyboard Shortcuts -> Function Keys
 
 <div class="checkbox-selected"></div> `Use F1, F2, etc. keys as standard function keys`
 
@@ -130,6 +143,13 @@ System Preferences -> Screen Saver -> Start Screen Saver when inactive -> For 30
 System Preferences -> Desktop & Dock -> Hot Corners... -> Start Screen Saver
 
 System Preferences -> Require password after screen saver begins or display is turned off -> **`[Immediately]`**
+
+## Screenshots
+
+```bash
+mkdir ~/Documents/Screenshots
+defaults write com.apple.screencapture location "$HOME/Documents/Screenshots"
+```
 
 ## App Store
 
