@@ -6,10 +6,6 @@ categories: macos
 permalink: /macbook-setup
 ---
 
-
-################
-
-
 ## Установка обновлений
 
 Apple menu () > About This Mac > Software Update.
