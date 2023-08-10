@@ -18,7 +18,7 @@ Apple menu () > About This Mac > Software Update.
 
 ## Установка Homebrew
 
-https://brew.sh
+[https://brew.sh](https://brew.sh)
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -41,27 +41,11 @@ yadm bootstrap
 
 ## Клавиатура
 
-Старый macOs:
-
-System Preferences ->  Keyboard
-
-(Если есть Touch Bar) Выбрать `Touch Bar shows [F1, F2, etc. Keys]`
-
-<div class="checkbox-selected"></div> `Use F1, F2, etc. keys as standard function keys`
-
-Новый macOs:
-
 System Settings -> Keyboard -> Keyboard Shortcuts -> Function Keys
 
 <div class="checkbox-selected"></div> `Use F1, F2, etc. keys as standard function keys`
 
 **⚠️ Modifier Keys нужно настраивать для внешних клавиатур отдельно.**
-
-Старый macOs:
-
-    Modifier Keys… -> Caps Lock Key: Control
-
-Новый macOs:
 
     Keyboard -> Keyboard Shortcuts -> Modifier Keys
 
@@ -101,20 +85,7 @@ Point & Click -> Tracking speed -> 6/10
 
 ## Turn display off
 
-Старый macOs:
-
-System Preferences -> Battery -> Power Adapter -> Turn display off after: 30m
-
-Новый macOs:
-
 System Preferences -> Lock Screen -> Turn display off on power adapter when inactive: for 30 minutes
-
-Старый macOs:
-
-System Preferences -> Battery -> Power Adapter ->
-<div class="checkbox-empty"></div> Enable Power Nap while plugged into a power adapter
-
-Новый macOs:
 
 System Preferences -> Battery -> Options... -> Wake for network access -> Never
 
@@ -123,16 +94,6 @@ System Preferences -> Battery -> Options... -> Wake for network access -> Never
 System Preferences -> Sound -> <div class="checkbox-empty"></div> Play sound on startup
 
 ## Lock gesture
-
-Старый macOs:
-
-System Preferences -> Desktop & Screen Saver -> Screen Saver -> Show screen saver after 30 minutes
-
-System Preferences -> Desktop & Screen Saver -> Screen Saver -> Hot Corners... -> Start Screen Saver
-
-System Preferences -> Security & Privacy -> General -> Require password **`[immediately]`** after sleep or screen saver begins
-
-Новый macOs:
 
 System Preferences -> Screen Saver -> Start Screen Saver when inactive -> For 30 minutes
 
