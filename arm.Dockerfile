@@ -6,6 +6,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/
 RUN gem install jekyll \
   bundler \
+  github-pages \
   html-proofer \
   jekyll-reload \
   jekyll-mentions \
@@ -17,6 +18,13 @@ RUN gem install jekyll \
   jekyll-assets \
   RedCloth \
   kramdown \
-  jemoji
+  jemoji \
+  jekyll-default-layout \
+  jekyll-gist \
+  jekyll-github-metadata \
+  jekyll-optional-front-matter \
+  jekyll-readme-index \
+  jekyll-titles-from-headings \
+  jekyll-relative-links
 WORKDIR /srv/jekyll
 EXPOSE 4000
