@@ -85,21 +85,21 @@ Point & Click -> Tracking speed -> 6/10
 
 ## Turn display off
 
-System Preferences -> Lock Screen -> Turn display off on power adapter when inactive: for 30 minutes
+System Settings -> Lock Screen -> Turn display off on power adapter when inactive: for 30 minutes
 
-System Preferences -> Battery -> Options... -> Wake for network access -> Never
+System Settings -> Battery -> Options... -> Wake for network access -> Never
 
 ## Убрать громкий звук при старте
 
-System Preferences -> Sound -> <div class="checkbox-empty"></div> Play sound on startup
+<div>System Settings -> Sound -> <div class="checkbox-empty"></div> Play sound on startup</div>
 
 ## Lock gesture
 
-System Preferences -> Screen Saver -> Start Screen Saver when inactive -> For 30 minutes
+System Settings -> Lock Screen -> Start Screen Saver when inactive -> For 30 minutes
 
-System Preferences -> Desktop & Dock -> Hot Corners... -> Start Screen Saver
+System Settings -> Desktop & Dock -> Hot Corners... -> Start Screen Saver
 
-System Preferences -> Require password after screen saver begins or display is turned off -> **`[Immediately]`**
+System Settings -> Require password after screen saver begins or display is turned off -> **`[Immediately]`**
 
 ## Screenshots
 
@@ -156,36 +156,9 @@ Prefs -> General -> Closing
 
 ## Dock
 
-```bash
-dockutil --remove Messages
-dockutil --remove Mail
-dockutil --remove Maps
-dockutil --remove FaceTime
-dockutil --remove Contacts
-dockutil --remove TV
-dockutil --remove Safari
-dockutil --remove Notes
-dockutil --remove Reminders
-dockutil --remove Music
-dockutil --remove Podcasts
-dockutil --remove 'Terminal'
-dockutil --add /Applications/Google\ Chrome.app  --after 'Launchpad'
-dockutil --add /Applications/Firefox.app --after 'Google Chrome'
-dockutil --add /Applications/iTerm.app --after 'Firefox'
-# Optionally
-dockutil --remove Photos
-```
-
-System Preferences -> Dock & Menu Bar
+System Settings -> Dock & Menu Bar
 
 <div class="checkbox-selected"></div> Automatically hide and show the Dock
-
-## Авторизация
-
-- Mail
-- bitwarden
-- chrome
-- standard-notes
 
 ## always open with
 
