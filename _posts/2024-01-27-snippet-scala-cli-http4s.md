@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "TodoApp. scala-cli + http4s"
-date:   2024-01-28
+date:   2024-01-27
 categories: 
   - scala
 permalink: /todoapp-scala-cli-http4s
