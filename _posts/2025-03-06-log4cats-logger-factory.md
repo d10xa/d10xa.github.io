@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "log4cats. Почему нужно использовать LoggerFactory"
-date:   2025-03-06
+title: "log4cats. Почему нужно использовать LoggerFactory"
+date: 2025-03-06
 categories:
   - scala
 permalink: /log4cats-logger-factory
