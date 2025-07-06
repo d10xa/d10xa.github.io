@@ -252,6 +252,7 @@ object Copy:
     val filterRules = List[FilterRule](
       include(p => true),
       exclude(hasFileName("copy.scala")),
+      exclude(hasFileName("paste.scala")),
       include(containsInPath("shared/shared")),
       keepOnlyExtensions(Set(".scala", ".sbt", ".css", ".md", ".cfg", ".yml", ".j2")),
     )
