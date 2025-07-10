@@ -303,7 +303,7 @@ import java.nio.file.{Files, Paths, StandardOpenOption}
 import scala.io.StdIn
 import scala.collection.mutable.StringBuilder
 
-object FileCreator {
+object Paste {
   case class ReplacementRule(from: String, to: String)
 
   def applyReplacements(text: String, replacements: List[ReplacementRule]): String =
