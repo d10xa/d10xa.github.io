@@ -299,19 +299,57 @@ val filterRules = List(
 
 //> using scala "3.6.4"
 
-import java.nio.file.{Files, Paths, StandardOpenOption}
-import scala.io.StdIn
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import scala.collection.mutable.StringBuilder
+import scala.io.StdIn
 
 object Paste {
   case class ReplacementRule(from: String, to: String)
 
-  def applyReplacements(text: String, replacements: List[ReplacementRule]): String =
+  private val FilePathPatterns = List(
+    "//file:",
+    "// file:",
+    "//Файл:",
+    "// Файл:",
+    "-- file:",
+    "-- Файл:",
+    "# file:",
+    "# Файл:",
+    "<!-- file:",
+    "<!-- Файл:"
+  )
+
+  def extractFilePath(line: String): Option[String] = {
+    val trimmed = line.trim
+
+    FilePathPatterns
+      .find(pattern => trimmed.startsWith(pattern))
+      .map { pattern =>
+        val afterPattern = trimmed.substring(pattern.length)
+        val cleanPath = if (pattern.startsWith("<!--")) {
+          afterPattern.replaceAll("\\s*-->\\s*$", "")
+        } else {
+          afterPattern
+        }
+        cleanPath.trim
+      }
+  }
+
+  def applyReplacements(
+    text: String,
+    replacements: List[ReplacementRule]
+  ): String =
     replacements.foldLeft(text) { (acc, rule) =>
       acc.replace(rule.from, rule.to)
     }
 
-  def writeFile(path: String, content: StringBuilder, replacements: List[ReplacementRule]): Unit = {
+  def writeFile(
+    path: String,
+    content: StringBuilder,
+    replacements: List[ReplacementRule]
+  ): Unit = {
     val processedPath = applyReplacements(path, replacements)
     val processedContent = applyReplacements(content.toString, replacements)
 
@@ -326,19 +364,6 @@ object Paste {
       StandardOpenOption.TRUNCATE_EXISTING
     )
     println(s"Created file: $processedPath")
-  }
-
-  def extractFilePath(line: String): Option[String] = {
-    val trimmed = line.trim
-    if (trimmed.startsWith("// file:")) {
-      Some(trimmed.substring("// file:".length).trim)
-    } else if (trimmed.startsWith("-- Файл:")) {
-      Some(trimmed.substring("-- Файл:".length).trim)
-    } else if (trimmed.startsWith("// Файл:")) {
-      Some(trimmed.substring("// Файл:".length).trim)
-    } else {
-      None
-    }
   }
 
   def main(args: Array[String]): Unit = {
@@ -378,7 +403,6 @@ object Paste {
     }
   }
 }
-
 ```
 
 ## Предупреждение
