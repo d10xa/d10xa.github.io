@@ -318,7 +318,9 @@ object Paste {
     "# file:",
     "# Файл:",
     "<!-- file:",
-    "<!-- Файл:"
+    "<!-- Файл:",
+    "/* file:",
+    "/* Файл:"
   )
 
   def extractFilePath(line: String): Option[String] = {
@@ -330,6 +332,8 @@ object Paste {
         val afterPattern = trimmed.substring(pattern.length)
         val cleanPath = if (pattern.startsWith("<!--")) {
           afterPattern.replaceAll("\\s*-->\\s*$", "")
+        } else if (pattern.startsWith("/*")) {
+           afterPattern.replaceAll("\\s*\\*/\\s*$", "")
         } else {
           afterPattern
         }
