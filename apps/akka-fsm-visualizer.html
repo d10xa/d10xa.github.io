@@ -1,0 +1,48 @@
+---
+layout: default
+title: "Akka FSM Visualizer"
+description: "Convert Akka FSM code to Mermaid state diagrams with live preview"
+permalink: /akka-fsm-visualizer/
+---
+
+<link rel="stylesheet" href="{{ '/assets/css/akka-fsm-visualizer.css' | relative_url }}">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+<div class="container">
+    <header>
+        <h1>Akka FSM Visualizer</h1>
+        <p>Convert Akka FSM code to Mermaid state diagrams</p>
+    </header>
+
+    <div class="controls">
+        <div class="file-input-wrapper">
+            <input type="file" id="fileInput" accept=".scala" />
+            <label for="fileInput">Upload .scala file</label>
+        </div>
+        <button id="copyButton" class="btn btn-copy">Copy Mermaid</button>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <div class="content">
+        <div class="panel code-panel">
+            <h3>Scala Code</h3>
+            <textarea id="codeInput" placeholder="Paste your Akka FSM code here..."></textarea>
+        </div>
+        
+        <div class="panel diagram-panel">
+            <div class="panel-header">
+                <h3>FSM Diagram</h3>
+                <div class="diagram-controls">
+                    <button id="toggleSource" class="btn btn-toggle">Show Code</button>
+                </div>
+            </div>
+            <div id="diagramContainer" class="diagram-display">
+                <div class="placeholder-text">Enter Akka FSM code to see the diagram</div>
+            </div>
+            <textarea id="mermaidOutput" class="mermaid-source" readonly placeholder="Mermaid diagram code..."></textarea>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="{{ '/assets/js/akka-fsm-visualizer.js' | relative_url }}"></script>

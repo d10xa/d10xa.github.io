@@ -1,0 +1,244 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-input-wrapper label {
+    background: #4ecdc4;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 500;
+    transition: background 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.file-input-wrapper label:hover {
+    background: #45b7ba;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-copy {
+    background: #45b7d1;
+    color: white;
+}
+
+.btn-copy:hover {
+    background: #3a9bc1;
+}
+
+.error {
+    background: #ff6b6b;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    display: none;
+    font-weight: 500;
+    text-align: center;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+    min-height: 600px;
+}
+
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+}
+
+.panel {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel h3 {
+    margin-bottom: 12px;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.diagram-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-toggle {
+    background: #f8f9fa;
+    color: #333;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border: 1px solid #e1e5e9;
+}
+
+.btn-toggle:hover {
+    background: #e9ecef;
+}
+
+#codeInput, #mermaidOutput {
+    flex: 1;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+    min-height: 500px;
+}
+
+#codeInput:focus {
+    outline: none;
+    border-color: #45b7d1;
+}
+
+#mermaidOutput {
+    background: #f8f9fa;
+    resize: none;
+}
+
+.mermaid-source {
+    display: none;
+}
+
+.diagram-display {
+    flex: 1;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+    padding: 20px;
+    background: #fafafa;
+    overflow: auto;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-text {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
+.error-text {
+    color: #ff6b6b;
+    font-weight: 500;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Mermaid diagram styling */
+.diagram-display .mermaid {
+    width: 100%;
+    text-align: center;
+}
+
+.diagram-display svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #codeInput, #mermaidOutput {
+        min-height: 300px;
+    }
+}
