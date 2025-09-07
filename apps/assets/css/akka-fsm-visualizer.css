@@ -93,6 +93,7 @@ header p {
     background: #3a9bc1;
 }
 
+
 .error {
     background: #ff6b6b;
     color: white;
@@ -181,6 +182,36 @@ header p {
     background: #5a32a3;
 }
 
+.btn-regenerate {
+    background: #fd7e14;
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    display: none; /* Hidden by default */
+}
+
+.btn-regenerate:hover {
+    background: #e85d04;
+}
+
+.btn-regenerate.show {
+    display: inline-block;
+}
+
+/* Modified indicator */
+.modified-indicator {
+    color: #fd7e14;
+    font-size: 0.7rem;
+    margin-left: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    vertical-align: super;
+}
+
+.modified-indicator.show {
+    opacity: 1;
+}
+
 #codeInput, #mermaidOutput {
     flex: 1;
     border: 1px solid #e1e5e9;
@@ -202,6 +233,19 @@ header p {
 #mermaidOutput {
     background: #f8f9fa;
     resize: none;
+    transition: all 0.3s ease;
+}
+
+#mermaidOutput:focus {
+    outline: none;
+    border-color: #fd7e14;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.1);
+}
+
+#mermaidOutput.modified {
+    border-left: 4px solid #fd7e14;
+    background: #fff9f5;
 }
 
 .mermaid-source {
@@ -245,6 +289,46 @@ header p {
     height: auto;
 }
 
+/* Enhanced styling for extreme PNG export quality */
+.diagram-display svg text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+    text-rendering: optimizeLegibility;
+    font-smooth: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.diagram-display svg .nodeLabel {
+    font-size: 16px !important; /* Increased for extreme quality */
+    font-weight: 700 !important; /* Bolder for better readability */
+    text-rendering: optimizeLegibility;
+}
+
+.diagram-display svg .edgeLabel {
+    font-size: 14px !important; /* Increased for extreme quality */
+    font-weight: 600 !important; /* Bolder for better readability */
+    background: white;
+    padding: 3px 6px; /* More padding for extreme quality */
+    border-radius: 4px;
+    text-rendering: optimizeLegibility;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for better contrast */
+}
+
+/* Additional extreme quality enhancements */
+.diagram-display svg {
+    shape-rendering: geometricPrecision;
+    text-rendering: optimizeLegibility;
+}
+
+.diagram-display svg path {
+    stroke-width: 2px; /* Slightly thicker lines for better visibility */
+}
+
+.diagram-display svg rect {
+    stroke-width: 2px; /* Thicker borders for nodes */
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .container {
@@ -271,22 +355,27 @@ header p {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.9);
     z-index: 9999;
     display: none;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .fullscreen-content {
     width: 95%;
-    height: 90%;
+    max-width: 1400px;
+    min-height: 90vh;
     background: white;
     border-radius: 8px;
     padding: 20px;
     position: relative;
-    overflow: auto;
+    box-sizing: border-box;
+    margin: auto;
 }
 
 .fullscreen-header {
@@ -296,6 +385,21 @@ header p {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #e1e5e9;
+}
+
+.zoom-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zoom-info span {
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #495057;
 }
 
 .fullscreen-close {
@@ -314,14 +418,117 @@ header p {
 
 .fullscreen-diagram {
     width: 100%;
-    height: calc(100% - 80px);
+    min-height: calc(90vh - 120px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    overflow: auto;
+    overflow: visible;
+    padding: 10px 0;
 }
 
 .fullscreen-diagram .mermaid {
     width: 100%;
     text-align: center;
+}
+
+/* Zoom Controls */
+.zoom-controls {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+}
+
+.zoom-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.zoom-btn:hover {
+    background: white;
+    border-color: #45b7d1;
+    color: #45b7d1;
+    transform: scale(1.05);
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+}
+
+/* Zoom Container */
+.zoom-container {
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    transition: transform 0.3s ease;
+    cursor: grab;
+    position: relative;
+    min-height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.zoom-container.dragging {
+    cursor: grabbing;
+    transition: none;
+}
+
+.zoom-container .mermaid {
+    width: auto;
+    max-width: none;
+    text-align: center;
+}
+
+.zoom-container svg {
+    max-width: none;
+    height: auto;
+}
+
+/* Update fullscreen diagram to allow overflow */
+.fullscreen-diagram {
+    width: 100%;
+    min-height: calc(90vh - 120px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px 0;
+    position: relative;
+}
+
+/* Mobile zoom controls */
+@media (max-width: 768px) {
+    .zoom-controls {
+        position: fixed;
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        flex-direction: row;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .zoom-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
 }

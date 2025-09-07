@@ -8,6 +8,7 @@ categories: [app]
 
 <link rel="stylesheet" href="{{ '/apps/assets/css/akka-fsm-visualizer.css' | relative_url }}">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <div class="container">
     <header>
@@ -20,6 +21,11 @@ categories: [app]
             <input type="file" id="fileInput" accept=".scala" />
             <label for="fileInput">Upload .scala file</label>
         </div>
+        <label class="checkbox-wrapper">
+            <input type="checkbox" id="simplifiedMode" />
+            <span class="checkmark"></span>
+            Simplified mode (hide self-transitions)
+        </label>
         <button id="copyButton" class="btn btn-copy">Copy Mermaid</button>
     </div>
 
@@ -33,15 +39,48 @@ categories: [app]
         
         <div class="panel diagram-panel">
             <div class="panel-header">
-                <h3>FSM Diagram</h3>
+                <h3>FSM Diagram 
+                    <span id="modifiedIndicator" class="modified-indicator" title="Mermaid code has been manually edited">●</span>
+                </h3>
                 <div class="diagram-controls">
                     <button id="toggleSource" class="btn btn-toggle">Show Code</button>
+                    <button id="regenerateCode" class="btn btn-regenerate" title="Re-generate from Scala code">⟳ Re-generate</button>
+                    <button id="exportSvg" class="btn btn-export">Export SVG</button>
+                    <button id="exportPng" class="btn btn-export">Export PNG</button>
+                    <button id="fullscreen" class="btn btn-fullscreen">Fullscreen</button>
                 </div>
             </div>
             <div id="diagramContainer" class="diagram-display">
                 <div class="placeholder-text">Enter Akka FSM code to see the diagram</div>
             </div>
-            <textarea id="mermaidOutput" class="mermaid-source" readonly placeholder="Mermaid diagram code..."></textarea>
+            <textarea id="mermaidOutput" class="mermaid-source" placeholder="Mermaid diagram code..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- Fullscreen Modal -->
+<div id="fullscreenModal" class="fullscreen-modal">
+    <div class="fullscreen-content">
+        <div class="fullscreen-header">
+            <h2>FSM Diagram - Fullscreen View</h2>
+            <div class="zoom-info">
+                <span id="zoomLevel">100%</span>
+            </div>
+            <button id="closeFullscreen" class="fullscreen-close">Close</button>
+        </div>
+        
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+            <button id="zoomOut" class="zoom-btn" title="Zoom Out">−</button>
+            <button id="zoomReset" class="zoom-btn" title="Reset Zoom">⌂</button>
+            <button id="zoomIn" class="zoom-btn" title="Zoom In">+</button>
+            <button id="fitToScreen" class="zoom-btn" title="Fit to Screen">⛶</button>
+        </div>
+        
+        <div id="fullscreenDiagram" class="fullscreen-diagram">
+            <div id="zoomContainer" class="zoom-container">
+                <!-- Diagram content will be cloned here -->
+            </div>
         </div>
     </div>
 </div>
