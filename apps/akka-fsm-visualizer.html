@@ -5,79 +5,134 @@ description: "Convert Akka FSM code to Mermaid state diagrams with live preview"
 permalink: /akka-fsm-visualizer/
 categories: [app]
 ---
-
-<link rel="stylesheet" href="{{ '/akka-fsm-visualizer/assets/css/akka-fsm-visualizer.css' | relative_url }}">
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-<div class="container">
-    <header>
-        <h1>Akka FSM Visualizer</h1>
-        <p>Convert Akka FSM code to Mermaid state diagrams</p>
-    </header>
-
-    <div class="controls">
-        <div class="file-input-wrapper">
-            <input type="file" id="fileInput" accept=".scala" />
-            <label for="fileInput">Upload .scala file</label>
-        </div>
-        <button id="copyButton" class="btn btn-copy">Copy Mermaid</button>
-    </div>
-
-    <div id="error" class="error"></div>
-
-    <div class="content">
-        <div class="panel code-panel">
-            <h3>Scala Code</h3>
-            <textarea id="codeInput" placeholder="Paste your Akka FSM code here..."></textarea>
-        </div>
-        
-        <div class="panel diagram-panel">
-            <div class="panel-header">
-                <h3>FSM Diagram 
-                    <span id="modifiedIndicator" class="modified-indicator" title="Mermaid code has been manually edited">●</span>
-                </h3>
-                <div class="diagram-controls">
-                    <button id="toggleSource" class="btn btn-toggle">Show Code</button>
-                    <button id="regenerateCode" class="btn btn-regenerate" title="Re-generate from Scala code">⟳ Re-generate</button>
-                    <button id="exportSvg" class="btn btn-export">Export SVG</button>
-                    <button id="exportPng" class="btn btn-export">Export PNG</button>
-                    <button id="fullscreen" class="btn btn-fullscreen">Fullscreen</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akka FSM to Mermaid Converter</title>
+    <link rel="stylesheet" href="{{ '/apps/assets/css/akka-fsm-visualizer.css' | relative_url }}">
+    <!-- Monaco Editor (VS Code editor) for code editing -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11.0.0/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>Akka FSM Visualizer</h1>
+                    <p>Convert Akka FSM code to Mermaid state diagrams</p>
+                </div>
+                <div class="header-controls">
+                    <label class="theme-toggle">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">🌙 Dark</span>
+                    </label>
                 </div>
             </div>
-            <div id="diagramContainer" class="diagram-display">
-                <div class="placeholder-text">Enter Akka FSM code to see the diagram</div>
+        </header>
+
+        <div class="controls">
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" accept=".scala" />
+                <label for="fileInput">Upload .scala file</label>
             </div>
-            <textarea id="mermaidOutput" class="mermaid-source" placeholder="Mermaid diagram code..."></textarea>
+            <button id="copyButton" class="btn btn-copy">Copy Mermaid</button>
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div class="content">
+            <div class="panel code-panel">
+                <div class="panel-header">
+                    <h3>Scala Code</h3>
+                    <div class="code-controls">
+                        <label class="syntax-toggle">
+                            <input type="checkbox" id="syntaxHighlight" checked>
+                            <span class="toggle-text">Monaco Editor (VS Code)</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Drag & Drop Zone -->
+                <div id="dropZone" class="drop-zone" style="display: none;">
+                    <div class="drop-zone-content">
+                        <svg class="drop-zone-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10,9 9,9 8,9"></polyline>
+                        </svg>
+                        <p class="drop-zone-text">Drop .scala file here</p>
+                        <p class="drop-zone-subtext">Supports Akka FSM .scala files</p>
+                        <div id="browseButton" class="drop-zone-file-action">📁 Browse Files</div>
+                        <div class="drop-zone-click-hint">or click anywhere to start typing</div>
+                    </div>
+                </div>
+                <!-- Code Editor Container -->
+                <div class="code-editor-container">
+                    <div id="monacoEditor" class="monaco-editor-wrapper"></div>
+                    <div id="textareaEditor" class="textarea-editor-wrapper" style="display: none;">
+                        <div id="lineNumbers" class="line-numbers"></div>
+                        <textarea id="codeInput" placeholder="Paste your Akka FSM code here..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel diagram-panel">
+                <div class="panel-header">
+                    <h3>FSM Diagram 
+                        <span id="modifiedIndicator" class="modified-indicator" title="Mermaid code has been manually edited">●</span>
+                    </h3>
+                    <div class="diagram-controls">
+                        <button id="toggleSource" class="btn btn-toggle">Show Code</button>
+                        <button id="regenerateCode" class="btn btn-regenerate" title="Re-generate from Scala code">⟳ Re-generate</button>
+                        <button id="exportSvg" class="btn btn-export">Export SVG</button>
+                        <button id="exportPng" class="btn btn-export">Export PNG</button>
+                        <button id="fullscreen" class="btn btn-fullscreen">Fullscreen</button>
+                    </div>
+                </div>
+                <div id="diagramContainer" class="diagram-display">
+                    <div class="placeholder-text">Enter Akka FSM code to see the diagram</div>
+                </div>
+                <textarea id="mermaidOutput" class="mermaid-source" placeholder="Mermaid diagram code..."></textarea>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Fullscreen Modal -->
-<div id="fullscreenModal" class="fullscreen-modal">
-    <div class="fullscreen-content">
-        <div class="fullscreen-header">
-            <h2>FSM Diagram - Fullscreen View</h2>
-            <div class="zoom-info">
-                <span id="zoomLevel">100%</span>
+    <!-- Fullscreen Modal -->
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <div class="fullscreen-content">
+            <div class="fullscreen-header">
+                <h2>FSM Diagram - Fullscreen View</h2>
+                <div class="zoom-info">
+                    <span id="zoomLevel">100%</span>
+                </div>
+                <button id="closeFullscreen" class="fullscreen-close">Close</button>
             </div>
-            <button id="closeFullscreen" class="fullscreen-close">Close</button>
-        </div>
-        
-        <!-- Zoom Controls -->
-        <div class="zoom-controls">
-            <button id="zoomOut" class="zoom-btn" title="Zoom Out">−</button>
-            <button id="zoomReset" class="zoom-btn" title="Reset Zoom">⌂</button>
-            <button id="zoomIn" class="zoom-btn" title="Zoom In">+</button>
-            <button id="fitToScreen" class="zoom-btn" title="Fit to Screen">⛶</button>
-        </div>
-        
-        <div id="fullscreenDiagram" class="fullscreen-diagram">
-            <div id="zoomContainer" class="zoom-container">
-                <!-- Diagram content will be cloned here -->
+            
+            <!-- Zoom Controls -->
+            <div class="zoom-controls">
+                <button id="zoomOut" class="zoom-btn" title="Zoom Out">−</button>
+                <button id="zoomReset" class="zoom-btn" title="Reset Zoom">⌂</button>
+                <button id="zoomIn" class="zoom-btn" title="Zoom In">+</button>
+                <button id="fitToScreen" class="zoom-btn" title="Fit to Screen">⛶</button>
+            </div>
+            
+            <div id="fullscreenDiagram" class="fullscreen-diagram">
+                <div id="zoomContainer" class="zoom-container">
+                    <!-- Diagram content will be cloned here -->
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script type="text/javascript" src="{{ '/akka-fsm-visualizer/assets/js/akka-fsm-visualizer.js' | relative_url }}"></script>
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script type="text/javascript" src="{{ '/apps/assets/js/akka-fsm-visualizer.js' | relative_url }}"></script>
+</body>
+</html>
