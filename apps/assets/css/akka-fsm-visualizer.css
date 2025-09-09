@@ -1,3 +1,74 @@
+/* CSS Variables for Theme Support */
+:root {
+    /* Light Theme (Default) */
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --container-bg: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --border-color: #e1e5e9;
+    --border-light: #f0f0f0;
+    --input-bg: #ffffff;
+    --input-border: #e1e5e9;
+    --input-focus: #007bff;
+    --button-primary: #007bff;
+    --button-primary-hover: #0056b3;
+    --button-secondary: #6c757d;
+    --button-copy: #28a745;
+    --button-copy-hover: #218838;
+    --button-export: #17a2b8;
+    --button-export-hover: #138496;
+    --button-regenerate: #fd7e14;
+    --button-regenerate-hover: #e66c0a;
+    --panel-bg: #ffffff;
+    --panel-header-bg: #f8f9fa;
+    --diagram-bg: #fafafa;
+    --line-numbers-bg: #f8f9fa;
+    --line-numbers-color: #6c757d;
+    --textarea-bg: transparent;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --container-bg: #1e1e1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #808080;
+    --border-color: #3d3d3d;
+    --border-light: #2d2d2d;
+    --input-bg: #2d2d2d;
+    --input-border: #3d3d3d;
+    --input-focus: #4dabf7;
+    --button-primary: #4dabf7;
+    --button-primary-hover: #339af0;
+    --button-secondary: #868e96;
+    --button-copy: #51cf66;
+    --button-copy-hover: #40c057;
+    --button-export: #22b8cf;
+    --button-export-hover: #15aabf;
+    --button-regenerate: #ff8c42;
+    --button-regenerate-hover: #fd7e14;
+    --panel-bg: #2d2d2d;
+    --panel-header-bg: #3d3d3d;
+    --diagram-bg: #2d2d2d;
+    --line-numbers-bg: #3d3d3d;
+    --line-numbers-color: #909090;
+    --textarea-bg: transparent;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+    --shadow-medium: rgba(0, 0, 0, 0.4);
+    --success-color: #51cf66;
+    --error-color: #ff6b6b;
+    --warning-color: #ffd43b;
+    --info-color: #22b8cf;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +77,10 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
 }
 
 .container {
@@ -21,9 +93,26 @@ body {
 }
 
 header {
-    text-align: center;
     margin-bottom: 30px;
     color: white;
+    position: relative;
+}
+
+.header-content {
+    display: block;
+    text-align: center;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
 }
 
 header h1 {
@@ -37,6 +126,74 @@ header p {
     font-size: 1.1rem;
     opacity: 0.9;
     font-weight: 300;
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle input {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    transition: background 0.3s ease;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle input:checked + .toggle-slider {
+    background: var(--button-primary);
+}
+
+.theme-toggle input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .header-text {
+        text-align: center;
+    }
 }
 
 .controls {
@@ -121,17 +278,18 @@ header p {
 }
 
 .panel {
-    background: white;
+    background: var(--panel-bg);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px var(--shadow-light);
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
 }
 
 .panel h3 {
     margin-bottom: 12px;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 500;
 }
@@ -212,17 +370,260 @@ header p {
     opacity: 1;
 }
 
-#codeInput, #mermaidOutput {
+/* Drag & Drop Zone Styles */
+.drop-zone {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed #45b7d1;
+    border-radius: 8px;
+    background: rgba(69, 183, 209, 0.05);
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    pointer-events: none; /* Don't block events when hidden */
+}
+
+.drop-zone.drag-over {
+    border-color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.1);
+    transform: scale(1.02);
+    pointer-events: auto; /* Enable events when active */
+}
+
+/* When drop zone is shown */
+.drop-zone[style*="flex"] {
+    pointer-events: auto;
+}
+
+.drop-zone-content {
+    text-align: center;
+    color: #45b7d1;
+    pointer-events: none;
+    position: relative;
+}
+
+.drop-zone-file-action {
+    display: inline-block;
+    padding: 16px 24px;
+    background: rgba(69, 183, 209, 0.1);
+    border: 2px solid #45b7d1;
+    border-radius: 8px;
+    margin-top: 16px;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.drop-zone-file-action:hover {
+    background: rgba(69, 183, 209, 0.2);
+    transform: translateY(-2px);
+}
+
+.drop-zone-click-hint {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.drop-zone-icon {
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.drop-zone-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.drop-zone-subtext {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* Code panel positioning for drop zone */
+.code-panel {
+    position: relative;
+}
+
+/* Syntax highlighting controls */
+.code-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.syntax-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.syntax-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #45b7d1;
+}
+
+.toggle-text {
+    color: #666;
+    user-select: none;
+}
+
+/* Code editor container */
+.code-editor-container {
+    position: relative;
     flex: 1;
+    min-height: 500px;
     border: 1px solid #e1e5e9;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Monaco Editor wrapper */
+.monaco-editor-wrapper {
+    width: 100%;
+    height: 500px;
+    min-height: 500px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.monaco-editor-wrapper.syntax-disabled {
+    display: none;
+}
+
+/* Monaco Editor specific dark theme styling */
+[data-theme="dark"] .monaco-editor-wrapper {
+    background: #0d1117;
+    border-color: var(--border-color);
+}
+
+/* Ensure Monaco editor respects the GitHub dark theme */
+[data-theme="dark"] .monaco-editor .margin,
+[data-theme="dark"] .monaco-editor .monaco-editor-background,
+[data-theme="dark"] .monaco-editor-wrapper .monaco-editor {
+    background: #0d1117 !important;
+    color: #e6edf3 !important;
+}
+
+/* GitHub-like dark theme improvements for Monaco */
+[data-theme="dark"] .monaco-editor .current-line,
+[data-theme="dark"] .monaco-editor .view-line {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .monaco-editor .selected-text {
+    background: #264f78 !important;
+}
+
+/* Syntax highlighting enhancements for dark theme */
+[data-theme="dark"] .monaco-editor .mtk1 { color: #e6edf3 !important; } /* Default text */
+[data-theme="dark"] .monaco-editor .mtk2 { color: #8b949e !important; } /* Comments */
+[data-theme="dark"] .monaco-editor .mtk3 { color: #79c0ff !important; } /* Keywords */
+[data-theme="dark"] .monaco-editor .mtk4 { color: #a5d6ff !important; } /* Strings */
+[data-theme="dark"] .monaco-editor .mtk5 { color: #79c0ff !important; } /* Numbers */
+[data-theme="dark"] .monaco-editor .mtk6 { color: #ffa657 !important; } /* Types */
+
+
+/* Textarea Editor with Line Numbers */
+.textarea-editor-wrapper {
+    display: flex;
+    width: 100%;
+    height: 500px;
+    min-height: 500px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--input-bg);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.line-numbers {
+    min-width: 60px;
+    width: 60px;
+    padding: 0 8px 0 0;
+    background: var(--line-numbers-bg);
+    border-right: 1px solid var(--border-color);
+    color: var(--line-numbers-color);
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: right;
+    user-select: none;
+    white-space: pre;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.textarea-editor-wrapper #codeInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 20px;
+    resize: none;
+    background: var(--textarea-bg);
+    color: var(--text-primary);
+    white-space: pre;
+    overflow-wrap: normal;
+    tab-size: 2;
+}
+
+#codeInput {
+    width: 100%;
+    height: 500px;
+    border: none;
+    padding: 12px;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    resize: none;
+    background: white;
+    outline: none;
+    tab-size: 4;
+}
+
+#codeInput:focus {
+    outline: 2px solid #45b7d1;
+    outline-offset: -2px;
+}
+
+#mermaidOutput {
+    flex: 1;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 12px;
     font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
     font-size: 13px;
     line-height: 1.4;
     resize: vertical;
-    transition: border-color 0.2s ease;
+    transition: all 0.3s ease;
     min-height: 500px;
+    background: var(--input-bg);
+    color: var(--text-primary);
 }
 
 #codeInput:focus {
@@ -231,20 +632,40 @@ header p {
 }
 
 #mermaidOutput {
-    background: #f8f9fa;
     resize: none;
-    transition: all 0.3s ease;
 }
 
 #mermaidOutput:focus {
     outline: none;
-    border-color: #fd7e14;
-    background: #fff;
+    border-color: var(--button-regenerate);
+    background: var(--input-bg);
     box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.1);
 }
 
+/* Dark theme support for focused state */
+[data-theme="dark"] #mermaidOutput:focus {
+    background: var(--input-bg) !important;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
 #mermaidOutput.modified {
-    border-left: 4px solid #fd7e14;
+    border-left: 4px solid var(--button-regenerate);
+}
+
+/* Dark theme support for Mermaid output textarea */
+[data-theme="dark"] #mermaidOutput {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Dark theme support for modified state */
+[data-theme="dark"] #mermaidOutput.modified {
+    background: rgba(255, 140, 66, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] #mermaidOutput.modified {
     background: #fff9f5;
 }
 
@@ -252,17 +673,25 @@ header p {
     display: none;
 }
 
+/* Dark theme support for mermaid source when visible */
+[data-theme="dark"] .mermaid-source {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
 .diagram-display {
     flex: 1;
-    border: 1px solid #e1e5e9;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 20px;
-    background: #fafafa;
+    background: var(--diagram-bg);
     overflow: auto;
     min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .placeholder-text {
@@ -287,6 +716,37 @@ header p {
 .diagram-display svg {
     max-width: 100%;
     height: auto;
+    background: var(--diagram-bg);
+    border-radius: 4px;
+}
+
+/* Dark theme support for Mermaid diagrams */
+[data-theme="dark"] .diagram-display svg {
+    background: var(--diagram-bg) !important;
+}
+
+/* Override Mermaid's default white background in dark mode */
+[data-theme="dark"] .diagram-display svg rect.background,
+[data-theme="dark"] .diagram-display svg .background {
+    fill: var(--diagram-bg) !important;
+}
+
+/* Ensure text is visible in dark mode */
+[data-theme="dark"] .diagram-display svg text {
+    fill: var(--text-primary) !important;
+}
+
+/* Fix node backgrounds in dark mode */
+[data-theme="dark"] .diagram-display svg .node rect,
+[data-theme="dark"] .diagram-display svg .node polygon,
+[data-theme="dark"] .diagram-display svg .node circle {
+    stroke: var(--border-color) !important;
+}
+
+/* Fix edge labels background in dark mode */
+[data-theme="dark"] .diagram-display svg .edgeLabel rect {
+    fill: var(--diagram-bg) !important;
+    stroke: none !important;
 }
 
 /* Enhanced styling for extreme PNG export quality */
@@ -308,11 +768,30 @@ header p {
 .diagram-display svg .edgeLabel {
     font-size: 14px !important; /* Increased for extreme quality */
     font-weight: 600 !important; /* Bolder for better readability */
-    background: white;
-    padding: 3px 6px; /* More padding for extreme quality */
-    border-radius: 4px;
     text-rendering: optimizeLegibility;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for better contrast */
+}
+
+/* Hide background rectangles for edge labels in Mermaid v11 */
+.diagram-display svg .edgeLabel rect {
+    fill: none !important;
+    stroke: none !important;
+    opacity: 0 !important;
+}
+
+/* Style edge label text directly */
+.diagram-display svg .edgeLabel text {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-rendering: optimizeLegibility;
+}
+
+/* Dark theme edge label text */
+[data-theme="dark"] .diagram-display svg .edgeLabel text {
+    fill: var(--text-primary) !important;
+}
+
+[data-theme="light"] .diagram-display svg .edgeLabel text {
+    fill: #333 !important;
 }
 
 /* Additional extreme quality enhancements */
@@ -370,12 +849,13 @@ header p {
     width: 95%;
     max-width: 1400px;
     min-height: 90vh;
-    background: white;
+    background: var(--container-bg);
     border-radius: 8px;
     padding: 20px;
     position: relative;
     box-sizing: border-box;
     margin: auto;
+    transition: all 0.3s ease;
 }
 
 .fullscreen-header {
@@ -530,5 +1010,196 @@ header p {
         width: 35px;
         height: 35px;
         font-size: 16px;
+    }
+}
+
+/* Toast Notifications System */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+    max-width: 400px;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #45b7d1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    pointer-events: auto;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.hide {
+    transform: translateX(400px);
+    opacity: 0;
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+}
+
+.toast-message {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+/* Toast types */
+.toast.success {
+    border-left-color: #28a745;
+}
+
+.toast.success .toast-icon {
+    background: #28a745;
+}
+
+.toast.error {
+    border-left-color: #dc3545;
+}
+
+.toast.error .toast-icon {
+    background: #dc3545;
+}
+
+.toast.warning {
+    border-left-color: #ffc107;
+}
+
+.toast.warning .toast-icon {
+    background: #ffc107;
+    color: #333;
+}
+
+.toast.info {
+    border-left-color: #17a2b8;
+}
+
+.toast.info .toast-icon {
+    background: #17a2b8;
+}
+
+/* Toast progress bar */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 8px 8px;
+    transform-origin: left;
+    animation: toast-progress 5s linear forwards;
+}
+
+.toast.success .toast-progress {
+    background: #28a745;
+}
+
+.toast.error .toast-progress {
+    background: #dc3545;
+}
+
+.toast.warning .toast-progress {
+    background: #ffc107;
+}
+
+.toast.info .toast-progress {
+    background: #17a2b8;
+}
+
+@keyframes toast-progress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Mobile adaptations for toasts */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .toast {
+        transform: translateY(-100px);
+    }
+    
+    .toast.show {
+        transform: translateY(0);
+    }
+    
+    .toast.hide {
+        transform: translateY(-100px);
     }
 }
