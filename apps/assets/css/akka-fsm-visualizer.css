@@ -58,7 +58,7 @@
     --panel-bg: #2d2d2d;
     --panel-header-bg: #3d3d3d;
     --diagram-bg: #2d2d2d;
-    --line-numbers-bg: #3d3d3d;
+    --line-numbers-bg: #000000;
     --line-numbers-color: #909090;
     --textarea-bg: transparent;
     --shadow-light: rgba(0, 0, 0, 0.3);
@@ -104,20 +104,24 @@ header {
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
     position: relative;
+    width: 100%;
 }
 
 .header-text {
     text-align: center;
-    flex-grow: 1;
+    flex-grow: 0;
 }
 
 .header-controls {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 header h1 {
@@ -195,16 +199,19 @@ header p {
         flex-direction: column;
         gap: 15px;
         align-items: center;
+        justify-content: center;
     }
     
     .header-text {
         text-align: center;
         order: 2;
+        width: 100%;
     }
     
     .header-controls {
         order: 1;
-        align-self: flex-end;
+        position: static;
+        align-self: center;
     }
     
     header h1 {
@@ -237,19 +244,22 @@ header p {
 }
 
 .file-input-wrapper label {
-    background: #4ecdc4;
+    background: var(--button-primary);
     color: white;
     padding: 12px 20px;
     border-radius: 6px;
     cursor: pointer;
     display: inline-block;
     font-weight: 500;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
     font-size: 0.95rem;
+    border: none;
+    box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .file-input-wrapper label:hover {
-    background: #45b7ba;
+    background: var(--button-primary-hover);
+    box-shadow: 0 3px 6px var(--shadow-medium);
 }
 
 .btn {
@@ -259,16 +269,30 @@ header p {
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.btn:focus,
+.file-input-wrapper label:focus {
+    outline: 2px solid var(--input-focus);
+    outline-offset: 2px;
+}
+
+.btn:active,
+.file-input-wrapper label:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--shadow-light);
 }
 
 .btn-copy {
-    background: #45b7d1;
+    background: var(--button-copy);
     color: white;
 }
 
 .btn-copy:hover {
-    background: #3a9bc1;
+    background: var(--button-copy-hover);
+    box-shadow: 0 3px 6px var(--shadow-medium);
 }
 
 
@@ -344,36 +368,65 @@ header p {
 .diagram-controls {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .btn-toggle {
-    background: #f8f9fa;
-    color: #333;
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    border: 1px solid #e1e5e9;
+    background: var(--panel-header-bg);
+    color: var(--text-primary);
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .btn-toggle:hover {
-    background: #e9ecef;
+    background: var(--border-light);
+    border-color: var(--input-focus);
+}
+
+.btn-toggle:focus,
+.btn-export:focus,
+.btn-fullscreen:focus,
+.btn-regenerate:focus {
+    outline: 2px solid var(--input-focus);
+    outline-offset: 2px;
+}
+
+.btn-toggle:active,
+.btn-export:active,
+.btn-fullscreen:active,
+.btn-regenerate:active {
+    transform: translateY(1px);
 }
 
 .btn-export {
-    background: #28a745;
+    background: var(--button-export);
     color: white;
-    padding: 6px 12px;
-    font-size: 0.85rem;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .btn-export:hover {
-    background: #218838;
+    background: var(--button-export-hover);
 }
 
 .btn-fullscreen {
     background: #6f42c1;
     color: white;
-    padding: 6px 12px;
-    font-size: 0.85rem;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .btn-fullscreen:hover {
@@ -381,15 +434,19 @@ header p {
 }
 
 .btn-regenerate {
-    background: #fd7e14;
+    background: var(--button-regenerate);
     color: white;
-    padding: 6px 12px;
-    font-size: 0.85rem;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
     display: none; /* Hidden by default */
 }
 
 .btn-regenerate:hover {
-    background: #e85d04;
+    background: var(--button-regenerate-hover);
 }
 
 .btn-regenerate.show {
@@ -879,13 +936,14 @@ header p {
     .btn-export,
     .btn-fullscreen,
     .btn-regenerate {
-        padding: 12px 16px;
+        padding: 10px 14px;
         font-size: 0.9rem;
         min-height: 44px; /* Apple's recommended touch target */
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
+        white-space: nowrap;
     }
     
     .btn,
