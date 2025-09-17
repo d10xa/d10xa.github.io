@@ -14,13 +14,14 @@ dl, dd, ol, ul, figure {
  * Basic styling
  */
 body {
-    font-family: $base-font-family;
-    font-size: $base-font-size;
-    line-height: $base-line-height;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
     font-weight: 300;
-    color: $text-color;
-    background-color: $background-color;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
     -webkit-text-size-adjust: 100%;
+    transition: background-color var(--transition), color var(--transition);
 }
 
 
@@ -80,8 +81,16 @@ li {
  * Headings
  */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 500;
+    font-weight: 600;
+    line-height: var(--line-height-heading);
+    color: var(--color-text-primary);
 }
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5, h6 { font-size: var(--font-size-base); }
 
 
 
@@ -89,15 +98,15 @@ h1, h2, h3, h4, h5, h6 {
  * Links
  */
 a {
-    color: $brand-color;
+    color: var(--color-accent);
     text-decoration: none;
 
     &:visited {
-        color: darken($brand-color, 15%);
+        color: var(--color-accent);
     }
 
     &:hover {
-        color: $text-color;
+        color: var(--color-accent-hover);
         text-decoration: underline;
     }
 }
@@ -108,11 +117,10 @@ a {
  * Blockquotes
  */
 blockquote {
-    color: $grey-color;
-    border-left: 1px solid $grey-color-light;
-    padding-left: calc($spacing-unit / 2);
-    font-size: 12px;
-    letter-spacing: -1px;
+    color: var(--color-text-secondary);
+    border-left: 2px solid var(--color-border);
+    padding-left: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
     font-style: italic;
 
     > :last-child {
@@ -127,14 +135,16 @@ blockquote {
  */
 pre,
 code {
-    font-size: 12px;
-    border: 1px solid $grey-color-light;
-    border-radius: 1px;
-    background-color: #fff;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-code-bg);
+    color: var(--color-code-text);
 }
 
 code {
-    padding: 1px 1px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    border: 1px solid var(--color-border);
 }
 
 pre {
