@@ -75,6 +75,85 @@ $small-font-size: calc(var(--font-size-base) * 0.875);
     }
 }
 
+// Home page sections
+.section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.apps-section {
+    margin-bottom: calc(var(--spacing-xl) * 1.5);
+}
+
+.posts-section {
+    margin-top: calc(var(--spacing-xl) * 1.5);
+}
+
+// App grid styles
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.app-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-bg-primary);
+    transition: all var(--transition);
+
+    &:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
+    }
+}
+
+.app-link {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--spacing-md);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    gap: var(--spacing-md);
+
+    &:hover {
+        text-decoration: none;
+        color: var(--color-text-primary);
+    }
+
+    &:visited {
+        color: var(--color-text-primary);
+    }
+}
+
+.app-icon {
+    font-size: 2em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.app-content {
+    flex: 1;
+}
+
+.app-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-primary);
+}
+
+.app-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
 div.checkbox-selected {
    content:url('/images/checkbox-selected.png');
    display: inline-block;
@@ -83,7 +162,6 @@ div.checkbox-selected {
    margin-right: 5px;
    margin-top: 0.3em;
 }
-
 
 div.checkbox-empty {
    content:url('/images/checkbox-empty.png');

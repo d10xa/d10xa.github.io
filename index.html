@@ -4,30 +4,41 @@ layout: default
 
 <div class="home">
 
-    <ul class="post-list">
-        {% for page in site.pages %}
-        {% for pc in page.categories %}
-        {% if pc == 'app' %}
-        <li>
-            <h2>
-                <a class="post-link" href="{{ page.url | prepend: site.baseurl }}">(app) {{ page.title }}</a>
-            </h2>
-        </li>
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
-    </ul>
+    <!-- Приложения -->
+    <section class="apps-section">
+        <h2 class="section-title">Приложения</h2>
+        <div class="app-grid">
+            {% for page in site.pages %}
+            {% for pc in page.categories %}
+            {% if pc == 'app' %}
+            <div class="app-card">
+                <a class="app-link" href="{{ page.url | prepend: site.baseurl }}">
+                    <div class="app-icon">{{ page.icon | default: "🔧" }}</div>
+                    <div class="app-content">
+                        <div class="app-title">{{ page.title }}</div>
+                        <div class="app-description">{{ page.description | default: "Веб-приложение" }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </section>
 
-    <ul class="post-list">
-        {% for post in site.posts %}
-        <li>
-            <span class="post-meta">{{ post.date | date: "%Y-%m-%d" }}</span>
-
-            <h2>
-                <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-            </h2>
-        </li>
-        {% endfor %}
-    </ul>
+    <!-- Статьи -->
+    <section class="posts-section">
+        <h2 class="section-title">Статьи</h2>
+        <ul class="post-list">
+            {% for post in site.posts %}
+            <li>
+                <span class="post-meta">{{ post.date | date: "%Y-%m-%d" }}</span>
+                <h3>
+                    <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                </h3>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
 
 </div>
