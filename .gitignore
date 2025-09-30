@@ -12,11 +12,5 @@ _site
 .jekyll-metadata
 .jekyll-cache/
 
-# Temporary files
-test.txt
-project-knowledge.txt
-copy.scala
-paste.scala
-
 # Posts build files
 _posts/.bsp/
