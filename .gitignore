@@ -2,3 +2,21 @@ _site
 .sass-cache
 .idea
 .scala-build/
+
+# IDE files
+.bsp/
+.metals/
+.vscode/
+
+# Jekyll
+.jekyll-metadata
+.jekyll-cache/
+
+# Temporary files
+test.txt
+project-knowledge.txt
+copy.scala
+paste.scala
+
+# Posts build files
+_posts/.bsp/
