@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Городской Карантин</title>
+  <script type="module" crossorigin src="assets/index-CwGGnoMt.js"></script>
+  <link rel="stylesheet" crossorigin href="assets/index-BXYwfhDl.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Левая колонка: Игровое поле -->
+        <div class="game-area">
+            <canvas id="gameCanvas" width="640" height="640"></canvas>
+        </div>
+
+        <!-- Средняя колонка: Информация и статистика -->
+        <div class="info-panel">
+            <h1>Городской Карантин</h1>
+
+            <div class="district-info">
+                <h2>Информация о районе</h2>
+                <div id="district-selection-hint" class="selection-hint">
+                    Кликните на район для выбора
+                </div>
+                <div id="district-details">
+                    <p>Координаты: <span id="coords">-</span></p>
+                    <p>Население: <span id="population">-</span></p>
+                    <p>Уровень заражения: <span id="infection">-</span>%</p>
+                    <p>Зараженных: <span id="infected-count">-</span></p>
+                </div>
+            </div>
+
+            <div class="global-stats">
+                <h2>Общая статистика</h2>
+                <p>Ход: <span id="turn-counter">1</span></p>
+                <p>Всего районов: 256</p>
+                <p>Зараженные районы: <span id="infected-districts">0</span></p>
+                <p>Здоровые районы: <span id="healthy-districts">256</span></p>
+                <p>Общее население: <span id="total-population">0</span></p>
+                <p>Всего зараженных: <span id="total-infected">0</span></p>
+            </div>
+
+            <div class="resources">
+                <h3>Ресурсы</h3>
+                <p>Бюджет: <span id="budget">1500</span>₽</p>
+                <p>Очки действий: <span id="action-points">3</span></p>
+            </div>
+
+            <div class="legend">
+                <h3>Легенда</h3>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #4CAF50;"></span>
+                    <span>Здоровый район</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #FFEB3B;"></span>
+                    <span>Легкое заражение</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #FF9800;"></span>
+                    <span>Среднее заражение</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #F44336;"></span>
+                    <span>Критическое</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 3px, transparent 3px);"></span>
+                    <span>Коммерческий</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: linear-gradient(to top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 3px, transparent 3px);"></span>
+                    <span>Промышленный</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 3px, transparent 3px);"></span>
+                    <span>Жилой</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Действия и управление -->
+        <div class="action-panel">
+            <div class="game-controls">
+                <h2>Действия</h2>
+                <div id="action-hint" class="action-hint">
+                    Выберите район для выполнения действий
+                </div>
+                <button id="build-hospital-btn" class="btn-action" data-cost="250" data-points="1" disabled>
+                    🏥 Построить больницу (250₽)
+                </button>
+                <button id="quarantine-btn" class="btn-action" data-cost="80" data-points="1" disabled>
+                    🚫 Ввести карантин (80₽)
+                </button>
+                <button id="vaccination-btn" class="btn-action" data-cost="150" data-points="1" disabled>
+                    💉 Вакцинация (150₽)
+                </button>
+                <button id="end-turn-btn" class="btn-primary">▶️ Закончить ход</button>
+            </div>
+
+            <div id="event-panel" class="event-panel" style="display: none;">
+                <h3>Событие!</h3>
+                <p id="event-text"></p>
+            </div>
+
+            <div class="difficulty-settings">
+                <h3>Настройки игры</h3>
+                <label for="difficulty-select">Сложность:</label>
+                <select id="difficulty-select" class="difficulty-selector">
+                    <option value="easy">Легкая</option>
+                    <option value="normal" selected>Нормальная</option>
+                    <option value="hard">Сложная</option>
+                </select>
+                <div class="control-buttons">
+                    <button id="restart-btn" class="btn-secondary">🔄 Новая игра</button>
+                    <button id="save-btn" class="btn-secondary">💾 Сохранить</button>
+                    <button id="load-btn" class="btn-secondary">📁 Загрузить</button>
+                    <button id="sound-toggle" class="btn-secondary">🔊 Звук</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
