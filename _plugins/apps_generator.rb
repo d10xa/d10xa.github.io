@@ -19,8 +19,13 @@ module AppsGenerator
         html_content = File.read(html_file_path)
 
         # Update asset paths to use app-specific namespace
+        # Handle absolute paths
         html_content = html_content.gsub(/\/apps\/assets\//, "/assets/#{app_id}/")
         html_content = html_content.gsub(/\{\{\s*'\/apps\/assets\/([^']+)'\s*\|\s*relative_url\s*\}\}/, "/assets/#{app_id}/\\1")
+
+        # Handle relative paths (src="assets/" and href="assets/")
+        html_content = html_content.gsub(/src="assets\//, "src=\"/assets/#{app_id}/")
+        html_content = html_content.gsub(/href="assets\//, "href=\"/assets/#{app_id}/")
 
         # Create a page without file using Jekyll::PageWithoutAFile
         page = Jekyll::PageWithoutAFile.new(site, site.source, '', "#{app_id}.html")
