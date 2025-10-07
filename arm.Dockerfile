@@ -4,27 +4,8 @@ RUN apt-get update \
     build-essential zlib1g-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/
-RUN gem install jekyll \
-  bundler \
-  github-pages \
-  html-proofer \
-  jekyll-reload \
-  jekyll-mentions \
-  jekyll-coffeescript \
-  jekyll-sass-converter \
-  jekyll-commonmark \
-  jekyll-paginate \
-  jekyll-compose \
-  jekyll-assets \
-  RedCloth \
-  kramdown \
-  jemoji \
-  jekyll-default-layout \
-  jekyll-gist \
-  jekyll-github-metadata \
-  jekyll-optional-front-matter \
-  jekyll-readme-index \
-  jekyll-titles-from-headings \
-  jekyll-relative-links
 WORKDIR /srv/jekyll
+# Copy Gemfile for dependency installation
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
 EXPOSE 4000

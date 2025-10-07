@@ -9,6 +9,8 @@ services:
     ports:
       - 4000:4000
     command:
+      - bundle
+      - exec
       - jekyll
       - serve
       - --host
