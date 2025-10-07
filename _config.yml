@@ -7,13 +7,3 @@ github_username:  d10xa
 
 markdown: kramdown
 permalink: /:year/:month/:title
-defaults:
-  - scope:
-      path: apps
-#      type: pages
-    values:
-
-      layout: null
-      permalink: /:basename/
-      categories:
-        - app

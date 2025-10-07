@@ -8,20 +8,18 @@ layout: default
     <section class="apps-section">
         <h2 class="section-title">Приложения</h2>
         <div class="app-grid">
-            {% for page in site.pages %}
-            {% for pc in page.categories %}
-            {% if pc == 'app' %}
+            {% for app in site.data.apps %}
+            {% if app.visible %}
             <div class="app-card">
-                <a class="app-link" href="{{ page.url | prepend: site.baseurl }}">
-                    <div class="app-icon">{{ page.icon | default: "🔧" }}</div>
+                <a class="app-link" href="/{{ app.id }}/">
+                    <div class="app-icon">{{ app.icon | default: "🔧" }}</div>
                     <div class="app-content">
-                        <div class="app-title">{{ page.title }}</div>
-                        <div class="app-description">{{ page.description | default: "Веб-приложение" }}</div>
+                        <div class="app-title">{{ app.title }}</div>
+                        <div class="app-description">{{ app.description | default: "Веб-приложение" }}</div>
                     </div>
                 </a>
             </div>
             {% endif %}
-            {% endfor %}
             {% endfor %}
         </div>
     </section>

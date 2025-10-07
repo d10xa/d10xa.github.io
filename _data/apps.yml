@@ -1,0 +1,17 @@
+- id: password-generator
+  title: Password Generator
+  description: Генератор паролей для создания надежных паролей
+  icon: 🔐
+  visible: true
+
+- id: akka-fsm-visualizer
+  title: Akka FSM Visualizer
+  description: Конвертация Akka FSM кода в диаграммы состояний Mermaid
+  icon: 🔄
+  visible: true
+
+- id: json-log-viewer
+  title: Json Log Viewer
+  description: Просмотр и анализ JSON логов с подсветкой и фильтрацией
+  icon: 📋
+  visible: true
