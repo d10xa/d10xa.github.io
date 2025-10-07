@@ -8,3 +8,25 @@ github_username:  d10xa
 markdown: kramdown
 permalink: /:year/:month/:title
 
+# Plugins
+plugins:
+  - jekyll-feed
+
+# Build settings
+safe: false
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - docker-compose.yml
+  - compose.arm.yml
+  - docker-serve.sh
+  - README.md
+  - CLAUDE.md
+
