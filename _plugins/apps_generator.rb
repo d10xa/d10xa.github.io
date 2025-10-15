@@ -24,8 +24,9 @@ module AppsGenerator
         html_content = html_content.gsub(/\{\{\s*'\/apps\/assets\/([^']+)'\s*\|\s*relative_url\s*\}\}/, "/assets/#{app_id}/\\1")
 
         # Handle absolute paths /assets/ (src="/assets/" and href="/assets/")
-        html_content = html_content.gsub(/src="\/assets\//, "src=\"/assets/#{app_id}/")
-        html_content = html_content.gsub(/href="\/assets\//, "href=\"/assets/#{app_id}/")
+        # Use negative lookahead to avoid double replacement of already processed paths
+        html_content = html_content.gsub(/src="\/assets\/(?!#{Regexp.escape(app_id)}\/)/, "src=\"/assets/#{app_id}/")
+        html_content = html_content.gsub(/href="\/assets\/(?!#{Regexp.escape(app_id)}\/)/, "href=\"/assets/#{app_id}/")
 
         # Handle relative paths (src="assets/" and href="assets/")
         html_content = html_content.gsub(/src="assets\//, "src=\"/assets/#{app_id}/")
