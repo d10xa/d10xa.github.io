@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Городской Карантин</title>
+  <script type="module" crossorigin src="/assets/index-BUXnp-eC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CyIvGUzV.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Resource Bar (Top) -->
+        <div class="resource-bar">
+            <div class="resource-stats">
+                <span class="stat">💰 <span id="budget">1200</span>₽</span>
+                <span class="stat">⚡ <span id="action-points">2</span></span>
+                <span class="stat">🕐 Ход <span id="turn-counter">1</span></span>
+                <span class="stat">🦠 <span id="total-infected">0</span></span>
+                <span class="stat">🏥 <span id="hospital-count">0</span></span>
+                <span class="stat" id="death-stat" style="display: none;">💀 <span id="death-count">0</span></span>
+            </div>
+            <button id="event-indicator" class="event-indicator" title="Активное событие (клик для показа)">📢</button>
+            <button id="end-turn-btn" class="btn-end-turn">▶️ Завершить ход</button>
+        </div>
+
+        <!-- Game Canvas Area -->
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Event Panel (Overlay above canvas) -->
+            <div id="event-panel" class="event-panel" style="display: none;">
+                <button id="event-close-btn" class="event-close-btn" title="Закрыть">✖</button>
+                <h3>Событие!</h3>
+                <p id="event-text"></p>
+            </div>
+        </div>
+
+        <!-- Selection Popup (Floating context menu) -->
+        <div id="selection-panel" class="selection-popup" style="display: none;">
+            <div class="popup-header">
+                <span class="popup-coords">Район [0,0]</span>
+            </div>
+            <div class="popup-stats">
+                <span>👥 <span class="popup-stat-value">0</span></span>
+                <span>🦠 <span class="popup-stat-value">0</span>%</span>
+            </div>
+            <div class="popup-actions">
+                <button id="action-hospital" class="action-icon" data-action="hospital" data-tooltip="Больница (-30% заражение)">
+                    <span class="icon">🏥</span>
+                    <span class="price">300₽</span>
+                </button>
+                <button id="action-quarantine" class="action-icon" data-action="quarantine" data-tooltip="Карантин (стоп распространение)">
+                    <span class="icon">🚫</span>
+                    <span class="price">200₽</span>
+                </button>
+                <button id="action-vaccine" class="action-icon" data-action="vaccine" data-tooltip="Вакцина (+30% иммунитет)">
+                    <span class="icon">💉</span>
+                    <span class="price">100₽</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Footer (Bottom) -->
+        <div class="game-footer">
+            <div class="controls-left">
+                <label for="grid-size-select" class="compact-label">Размер:</label>
+                <select id="grid-size-select" class="compact-select">
+                    <option value="small">8×8</option>
+                    <option value="medium" selected>10×10</option>
+                    <option value="large">12×12</option>
+                    <option value="xlarge">16×16</option>
+                </select>
+
+                <label for="difficulty-select" class="compact-label">Сложность:</label>
+                <select id="difficulty-select" class="compact-select">
+                    <option value="easy">Легкая</option>
+                    <option value="normal" selected>Нормальная</option>
+                    <option value="hard">Сложная</option>
+                </select>
+
+                <button id="restart-btn" class="btn-icon" title="Новая игра">🔄</button>
+                <button id="save-btn" class="btn-icon" title="Сохранить">💾</button>
+                <button id="load-btn" class="btn-icon" title="Загрузить">📁</button>
+                <button id="sound-toggle" class="btn-icon" title="Звук">🔊</button>
+            </div>
+
+            <div class="legend-compact">
+                <span class="legend-item">🟢 Здоровый</span>
+                <span class="legend-item">🟡 Легкое</span>
+                <span class="legend-item">🟠 Среднее</span>
+                <span class="legend-item">🔴 Критич.</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
